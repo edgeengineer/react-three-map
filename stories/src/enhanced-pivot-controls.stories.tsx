@@ -1,24 +1,24 @@
-import { Box, ScreenSizer, Sphere } from "@react-three/drei";
-import { EnhancedPivotControls } from "./EnhancedPivotControls";
+import { Box, Sphere, ScreenSizer } from "@react-three/drei";
 import { useControls } from "leva";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { Marker as MapboxMarker } from "react-map-gl/mapbox";
 import { Marker as MaplibreMarker } from "react-map-gl/maplibre";
-import { useMap, 
-  vector3ToCoords
- } from "react-three-map";
+import { useMap, vector3ToCoords } from "react-three-map";
 import { Euler, Matrix4, Vector3, Vector3Tuple } from "three";
 import { StoryMap } from "./story-map";
+import { EnhancedPivotControls } from "./EnhancedPivotControls";
 
-export function Default() {
+export function EnhancedPivotStory() {
   const origin = useControls({
     latitude: { value: 51, min: -90, max: 90 },
     longitude: { value: 0, min: -180, max: 180 },
     altitude: { value: 0, min: -1000, max: 10000, step: 10 },
-    enableRotation: { value: true, label: 'Enable All Rotations' },
-    rotateX: { value: true, label: 'X Rotation (Red)' },
-    rotateY: { value: true, label: 'Y Rotation (Green)' },
-    rotateZ: { value: true, label: 'Z Rotation (Blue)' }
+    showTranslation: { value: true, label: 'Show Translation' },
+    showRotationX: { value: true, label: 'Show Rotation X (Red)' },
+    showRotationY: { value: true, label: 'Show Rotation Y (Green)' },
+    showRotationZ: { value: true, label: 'Show Rotation Z (Blue)' },
+    showLabels: { value: true, label: 'Show Axis Labels' },
+    controlScale: { value: 500, min: 100, max: 1000, step: 50, label: 'Control Scale' }
   })
   const [position, setPosition] = useState<Vector3Tuple>([0, 0, 0]);
   const [rotation, setRotation] = useState<Vector3Tuple>([0, 0, 0]);
@@ -28,7 +28,9 @@ export function Default() {
   useEffect(() => {
     setPosition([0, 0, 0]);
     setRotation([0, 0, 0]);
-  }, [origin]) // eslint-disable-line react-hooks/exhaustive-deps
+  }, [origin.latitude, origin.longitude, origin.altitude])
+
+  const hasAnyRotation = origin.showRotationX || origin.showRotationY || origin.showRotationZ;
 
   return <div style={{ height: '100vh' }}>
     <StoryMap
@@ -39,13 +41,16 @@ export function Default() {
       maplibreChildren={(
         <MaplibreMarker {...geoPos}>
           <div style={{ fontSize: 14, background: 'rgba(255,255,255,0.9)', padding: '4px', borderRadius: '4px' }}>
+            <strong>Position:</strong><br />
             lat: {geoPos.latitude.toFixed(6)}<br />
             lon: {geoPos.longitude.toFixed(6)}<br />
-            {origin.enableRotation && (
+            alt: {geoPos.altitude?.toFixed(2) || 0}m<br />
+            {hasAnyRotation && (
               <>
-                {origin.rotateX && <>rx: {(rotation[0] * 180 / Math.PI).toFixed(1)}°<br /></>}
-                {origin.rotateY && <>ry: {(rotation[1] * 180 / Math.PI).toFixed(1)}°<br /></>}
-                {origin.rotateZ && <>rz: {(rotation[2] * 180 / Math.PI).toFixed(1)}°</>}
+                <strong>Rotation:</strong><br />
+                {origin.showRotationX && <span style={{color: '#ff0000'}}>X: {(rotation[0] * 180 / Math.PI).toFixed(1)}°<br /></span>}
+                {origin.showRotationY && <span style={{color: '#00ff00'}}>Y: {(rotation[1] * 180 / Math.PI).toFixed(1)}°<br /></span>}
+                {origin.showRotationZ && <span style={{color: '#0000ff'}}>Z: {(rotation[2] * 180 / Math.PI).toFixed(1)}°<br /></span>}
               </>
             )}
           </div>
@@ -54,13 +59,16 @@ export function Default() {
       mapboxChildren={(
         <MapboxMarker {...geoPos}>
           <div style={{ fontSize: 14, background: 'rgba(255,255,255,0.9)', padding: '4px', borderRadius: '4px' }}>
+            <strong>Position:</strong><br />
             lat: {geoPos.latitude.toFixed(6)}<br />
             lon: {geoPos.longitude.toFixed(6)}<br />
-            {origin.enableRotation && (
+            alt: {geoPos.altitude?.toFixed(2) || 0}m<br />
+            {hasAnyRotation && (
               <>
-                {origin.rotateX && <>rx: {(rotation[0] * 180 / Math.PI).toFixed(1)}°<br /></>}
-                {origin.rotateY && <>ry: {(rotation[1] * 180 / Math.PI).toFixed(1)}°<br /></>}
-                {origin.rotateZ && <>rz: {(rotation[2] * 180 / Math.PI).toFixed(1)}°</>}
+                <strong>Rotation:</strong><br />
+                {origin.showRotationX && <span style={{color: '#ff0000'}}>X: {(rotation[0] * 180 / Math.PI).toFixed(1)}°<br /></span>}
+                {origin.showRotationY && <span style={{color: '#00ff00'}}>Y: {(rotation[1] * 180 / Math.PI).toFixed(1)}°<br /></span>}
+                {origin.showRotationZ && <span style={{color: '#0000ff'}}>Z: {(rotation[2] * 180 / Math.PI).toFixed(1)}°<br /></span>}
               </>
             )}
           </div>
@@ -74,10 +82,12 @@ export function Default() {
         rotation={rotation}
         setPosition={setPosition} 
         setRotation={setRotation}
-        enableRotation={origin.enableRotation}
-        rotateX={origin.rotateX}
-        rotateY={origin.rotateY}
-        rotateZ={origin.rotateZ}
+        showTranslation={origin.showTranslation}
+        showRotationX={origin.showRotationX}
+        showRotationY={origin.showRotationY}
+        showRotationZ={origin.showRotationZ}
+        showLabels={origin.showLabels}
+        scale={origin.controlScale}
       />
       <ScreenSizer position={position} rotation={rotation} scale={1}>
         <Sphere
@@ -97,13 +107,16 @@ interface MovingBoxProps {
   rotation: Vector3Tuple,
   setPosition: (pos: Vector3Tuple) => void,
   setRotation: (rot: Vector3Tuple) => void,
-  enableRotation: boolean,
-  rotateX: boolean,
-  rotateY: boolean,
-  rotateZ: boolean
+  showTranslation: boolean,
+  showRotationX: boolean,
+  showRotationY: boolean,
+  showRotationZ: boolean,
+  showLabels: boolean,
+  scale: number
 }
 
 const _v3 = new Vector3()
+const _euler = new Euler()
 
 const InteractiveBoxes: FC = () => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
@@ -136,9 +149,18 @@ const InteractiveBoxes: FC = () => {
   );
 };
 
-const _euler = new Euler();
-
-const Move: FC<MovingBoxProps> = ({ position, rotation, setPosition, setRotation, enableRotation, rotateX, rotateY, rotateZ }) => {
+const Move: FC<MovingBoxProps> = ({ 
+  position, 
+  rotation, 
+  setPosition, 
+  setRotation, 
+  showTranslation,
+  showRotationX,
+  showRotationY,
+  showRotationZ,
+  showLabels,
+  scale
+}) => {
   const matrix = useMemo(() => {
     const m = new Matrix4();
     m.makeRotationFromEuler(_euler.fromArray(rotation));
@@ -159,28 +181,36 @@ const Move: FC<MovingBoxProps> = ({ position, rotation, setPosition, setRotation
   
   const onDrag = useCallback((m4: Matrix4) => {
     setPosition(_v3.setFromMatrixPosition(m4).toArray());
-    if (enableRotation) {
+    if (showRotationX || showRotationY || showRotationZ) {
       _euler.setFromRotationMatrix(m4);
       setRotation(_euler.toArray() as Vector3Tuple);
     }
-  }, [setPosition, setRotation, enableRotation])
+  }, [setPosition, setRotation, showRotationX, showRotationY, showRotationZ])
   
   const disableRotations = useMemo(() => {
-    if (!enableRotation) return true;
-    return [!rotateX, !rotateY, !rotateZ] as [boolean, boolean, boolean];
-  }, [enableRotation, rotateX, rotateY, rotateZ]);
+    return [!showRotationX, !showRotationY, !showRotationZ] as [boolean, boolean, boolean];
+  }, [showRotationX, showRotationY, showRotationZ]);
+  
+  const disableTranslations = useMemo(() => {
+    return [!showTranslation, !showTranslation, !showTranslation] as [boolean, boolean, boolean];
+  }, [showTranslation]);
   
   return (
     <EnhancedPivotControls
       fixed
       matrix={matrix}
-      activeAxes={[true, true, true]}
       disableRotations={disableRotations}
-      scale={500}
+      disableTranslations={disableTranslations}
+      scale={scale}
       onDragStart={onDragStart}
       onDragEnd={onDragEnd}
       onDrag={onDrag}
-      annotations
+      annotations={showLabels}
     />
   )
 }
+
+export default {
+  title: 'PivotControls',
+  component: EnhancedPivotStory,
+};
