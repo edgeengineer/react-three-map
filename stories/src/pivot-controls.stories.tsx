@@ -1,4 +1,4 @@
-import { Box, ScreenSizer, Sphere } from "@react-three/drei";
+import { Box, Cone, ScreenSizer } from "@react-three/drei";
 import { EnhancedPivotControls } from "./EnhancedPivotControls";
 import { useControls } from "leva";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
@@ -80,8 +80,8 @@ export function Default() {
         rotateZ={origin.rotateZ}
       />
       <ScreenSizer position={position} rotation={rotation} scale={1}>
-        <Sphere
-          args={[50]}
+        <Cone
+          args={[50, 100, 8]}
           position={[0, 0, 0]}
           material-color={'orange'}
         />
@@ -181,6 +181,7 @@ const Move: FC<MovingBoxProps> = ({ position, rotation, setPosition, setRotation
       onDragEnd={onDragEnd}
       onDrag={onDrag}
       annotations
+      rotationThickness={0.06}
     />
   )
 }

@@ -1,4 +1,4 @@
-import { Box, Sphere, ScreenSizer } from "@react-three/drei";
+import { Box, Cone, ScreenSizer } from "@react-three/drei";
 import { useControls } from "leva";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { Marker as MapboxMarker } from "react-map-gl/mapbox";
@@ -19,7 +19,7 @@ export function EnhancedPivotStory() {
     showRotationZ: { value: true, label: 'Show Rotation Z (Blue)' },
     showLabels: { value: true, label: 'Show Axis Labels' },
     controlScale: { value: 500, min: 100, max: 1000, step: 50, label: 'Control Scale' },
-    rotationThickness: { value: 0.03, min: 0.01, max: 0.1, step: 0.005, label: 'Rotation Thickness' },
+    rotationThickness: { value: 0.06, min: 0.01, max: 0.1, step: 0.005, label: 'Rotation Thickness' },
     translationThickness: { value: 0.015, min: 0.005, max: 0.05, step: 0.005, label: 'Translation Thickness' },
     arrowHeadSize: { value: 0.05, min: 0.02, max: 0.15, step: 0.01, label: 'Arrow Head Size' }
   })
@@ -95,13 +95,12 @@ export function EnhancedPivotStory() {
         translationThickness={origin.translationThickness}
         arrowHeadSize={origin.arrowHeadSize}
       />
-      <ScreenSizer position={position} rotation={rotation} scale={1}>
-        <Sphere
-          args={[50]}
-          position={[0, 0, 0]}
-          material-color={'orange'}
-        />
-      </ScreenSizer>
+      <Cone
+        args={[50, 100, 8]}
+        position={position}
+        rotation={rotation}
+        material-color={'orange'}
+      />
       <InteractiveBoxes />
       <axesHelper position={position} rotation={rotation} args={[1000]} />
     </StoryMap>
@@ -225,7 +224,111 @@ const Move: FC<MovingBoxProps> = ({
   )
 }
 
+export function EnhancedPivotWithScreenSizer() {
+  const origin = useControls('ScreenSizer Story', {
+    latitude: { value: 51, min: -90, max: 90 },
+    longitude: { value: 0, min: -180, max: 180 },
+    altitude: { value: 0, min: -1000, max: 10000, step: 10 },
+    showTranslation: { value: true, label: 'Show Translation' },
+    showRotationX: { value: true, label: 'Show Rotation X (Red)' },
+    showRotationY: { value: true, label: 'Show Rotation Y (Green)' },
+    showRotationZ: { value: true, label: 'Show Rotation Z (Blue)' },
+    showLabels: { value: true, label: 'Show Axis Labels' },
+    controlScale: { value: 500, min: 100, max: 1000, step: 50, label: 'Control Scale' },
+    rotationThickness: { value: 0.06, min: 0.01, max: 0.1, step: 0.005, label: 'Rotation Thickness' },
+    translationThickness: { value: 0.015, min: 0.005, max: 0.05, step: 0.005, label: 'Translation Thickness' },
+    arrowHeadSize: { value: 0.05, min: 0.02, max: 0.15, step: 0.01, label: 'Arrow Head Size' }
+  })
+  const [position, setPosition] = useState<Vector3Tuple>([0, 0, 0]);
+  const [rotation, setRotation] = useState<Vector3Tuple>([0, 0, 0]);
+  const geoPos = useMemo(() => vector3ToCoords(position, origin), [position, origin])
+
+  // reset on origin change
+  useEffect(() => {
+    setPosition([0, 0, 0]);
+    setRotation([0, 0, 0]);
+  }, [origin.latitude, origin.longitude, origin.altitude])
+
+  const hasAnyRotation = origin.showRotationX || origin.showRotationY || origin.showRotationZ;
+
+  return <div style={{ height: '100vh' }}>
+    <StoryMap
+      {...origin}
+      zoom={13}
+      pitch={60}
+      canvas={{ altitude: origin.altitude }}
+      maplibreChildren={(
+        <MaplibreMarker {...geoPos}>
+          <div style={{ fontSize: 14, background: 'rgba(255,255,255,0.9)', padding: '4px', borderRadius: '4px' }}>
+            <strong>ScreenSizer Mode</strong><br />
+            <strong>Position:</strong><br />
+            lat: {geoPos.latitude.toFixed(6)}<br />
+            lon: {geoPos.longitude.toFixed(6)}<br />
+            alt: {geoPos.altitude?.toFixed(2) || 0}m<br />
+            {hasAnyRotation && (
+              <>
+                <strong>Rotation:</strong><br />
+                {origin.showRotationX && <span style={{color: '#ff0000'}}>X: {(rotation[0] * 180 / Math.PI).toFixed(1)}°<br /></span>}
+                {origin.showRotationY && <span style={{color: '#00ff00'}}>Y: {(rotation[1] * 180 / Math.PI).toFixed(1)}°<br /></span>}
+                {origin.showRotationZ && <span style={{color: '#0000ff'}}>Z: {(rotation[2] * 180 / Math.PI).toFixed(1)}°<br /></span>}
+              </>
+            )}
+          </div>
+        </MaplibreMarker>
+      )}
+      mapboxChildren={(
+        <MapboxMarker {...geoPos}>
+          <div style={{ fontSize: 14, background: 'rgba(255,255,255,0.9)', padding: '4px', borderRadius: '4px' }}>
+            <strong>ScreenSizer Mode</strong><br />
+            <strong>Position:</strong><br />
+            lat: {geoPos.latitude.toFixed(6)}<br />
+            lon: {geoPos.longitude.toFixed(6)}<br />
+            alt: {geoPos.altitude?.toFixed(2) || 0}m<br />
+            {hasAnyRotation && (
+              <>
+                <strong>Rotation:</strong><br />
+                {origin.showRotationX && <span style={{color: '#ff0000'}}>X: {(rotation[0] * 180 / Math.PI).toFixed(1)}°<br /></span>}
+                {origin.showRotationY && <span style={{color: '#00ff00'}}>Y: {(rotation[1] * 180 / Math.PI).toFixed(1)}°<br /></span>}
+                {origin.showRotationZ && <span style={{color: '#0000ff'}}>Z: {(rotation[2] * 180 / Math.PI).toFixed(1)}°<br /></span>}
+              </>
+            )}
+          </div>
+        </MapboxMarker>
+      )}
+    >
+      <ambientLight intensity={0.5} />
+      <directionalLight position={[10, 10, 5]} intensity={0.5} />
+      <Move 
+        position={position} 
+        rotation={rotation}
+        setPosition={setPosition} 
+        setRotation={setRotation}
+        showTranslation={origin.showTranslation}
+        showRotationX={origin.showRotationX}
+        showRotationY={origin.showRotationY}
+        showRotationZ={origin.showRotationZ}
+        showLabels={origin.showLabels}
+        scale={origin.controlScale}
+        rotationThickness={origin.rotationThickness}
+        translationThickness={origin.translationThickness}
+        arrowHeadSize={origin.arrowHeadSize}
+      />
+      <ScreenSizer position={position} rotation={rotation} scale={1}>
+        <Cone
+          args={[50, 100, 8]}
+          position={[0, 0, 0]}
+          material-color={'hotpink'}
+        />
+      </ScreenSizer>
+      <InteractiveBoxes />
+      <axesHelper position={position} rotation={rotation} args={[1000]} />
+    </StoryMap>
+  </div>
+}
+
 export default {
   title: 'PivotControls',
-  component: EnhancedPivotStory,
 };
+
+export const Default = EnhancedPivotStory;
+export const WithScreenSizer = EnhancedPivotWithScreenSizer;
