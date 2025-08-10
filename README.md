@@ -1,13 +1,12 @@
 # ![logo](public/favicon.svg)React Three Map
 
-[![Repository](https://img.shields.io/static/v1?&message=github&style=flat&colorA=000000&colorB=000000&label=&logo=github&logoColor=ffffff)](https://github.com/RodrigoHamuy/react-three-map)
-[![Version](https://img.shields.io/npm/v/react-three-map?style=flat&colorA=000000&colorB=000000)](https://npmjs.com/package/react-three-map)
-[![Build Size](https://img.shields.io/bundlephobia/minzip/react-three-map?label=size&?style=flat&colorA=000000&colorB=000000)](https://bundlephobia.com/result?p=react-three-map)
-[![Build Status](https://img.shields.io/github/actions/workflow/status/RodrigoHamuy/react-three-map/release.yml?branch=main&style=flat&colorA=000000)](https://github.com/RodrigoHamuy/react-three-map/actions?query=workflow%3Arelease)
-[![Examples](https://img.shields.io/badge/stories-stories?colorA=000&colorB=000000&label=📍)](https://rodrigohamuy.github.io/react-three-map/?story=canvas--a-maplibre-example)
-[![Sponsor me](https://img.shields.io/github/sponsors/RodrigoHamuy?style=flat&colorA=000000&colorB=000000&label=💛%20sponsor)](https://github.com/sponsors/RodrigoHamuy?frequency=one-time&sponsor=RodrigoHamuy)
+[![Repository](https://img.shields.io/static/v1?&message=github&style=flat&colorA=000000&colorB=000000&label=&logo=github&logoColor=ffffff)](https://github.com/edgeengineer/react-three-map)
+[![Version](https://img.shields.io/npm/v/@edgeengineer/react-three-map?style=flat&colorA=000000&colorB=000000)](https://npmjs.com/package/@edgeengineer/react-three-map)
+[![Build Size](https://img.shields.io/bundlephobia/minzip/@edgeengineer/react-three-map?label=size&?style=flat&colorA=000000&colorB=000000)](https://bundlephobia.com/result?p=@edgeengineer/react-three-map)
 
-`react-three-map` is a bridge to use [`react-three-fiber`](https://github.com/pmndrs/react-three-fiber) inside [`react-map-gl`](https://github.com/visgl/react-map-gl).
+**Fork of [react-three-map](https://github.com/RodrigoHamuy/react-three-map) by [RodrigoHamuy](https://github.com/RodrigoHamuy) with Custom Pivot Controls and extensive utilities for GIS applications.**
+
+`@edgeengineer/react-three-map` is an enhanced bridge to use [`react-three-fiber`](https://github.com/pmndrs/react-three-fiber) inside [`react-map-gl`](https://github.com/visgl/react-map-gl) with additional features for professional GIS workflows.
 
 Until now you had:
 
@@ -16,10 +15,18 @@ Until now you had:
 | Maplibre/Mapbox | react-map-gl        |
 | THREE.js        | react-three-fiber   |
 
-Now with `react-three-map`, you can use them together :fist_right::star::fist_left:.
+Now with `@edgeengineer/react-three-map`, you can use them together :fist_right::star::fist_left:.
+
+## ✨ New Features in this Fork
+
+- **🎮 Custom Pivot Controls** - Enhanced interaction controls for 3D objects in map space
+- **🌍 Extensive GIS Utilities** - Professional-grade geospatial tools and calculations
+- **📊 Advanced Coordinate Systems** - Extended support for various GIS coordinate projections
+- **🛠️ Enhanced Developer Tools** - Improved debugging and development experience
+- **⚡ Performance Optimizations** - Optimized for large-scale GIS applications
 
 ```sh
-npm install react-three-map
+npm install @edgeengineer/react-three-map
 ```
 
 - [React Three Map](#react-three-map)

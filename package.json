@@ -1,18 +1,20 @@
 {
-  "name": "react-three-map",
+  "name": "@edgeengineer/react-three-map",
   "version": "1.0.0",
-  "description": "Use react-three-fiber inside MapLibre and Mapbox",
-  "main": "dist/cjs/main.js",
-  "module": "dist/es/main.mjs",
-  "types": "dist/types/mapbox.index.d.ts",
+  "description": "A React wrapper library for Google Maps 3D with React Three Fiber integration",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
+  "files": [
+    "dist"
+  ],
   "sideEffects": false,
-  "repository": "https://github.com/RodrigoHamuy/react-three-map",
-  "homepage": "https://github.com/RodrigoHamuy/react-three-map",
+  "repository": "https://github.com/edgeengineer/react-three-map",
+  "homepage": "https://github.com/edgeengineer/react-three-map",
   "bugs": {
-    "url": "https://github.com/RodrigoHamuy/react-three-map/issues"
+    "url": "https://github.com/edgeengineer/react-three-map/issues"
   },
   "license": "MIT",
-  "author": "RodrigoHamuy",
+  "author": "EdgeEngineer",
   "scripts": {
     "prebuild": "tsc --project tsconfig.mapbox.json && tsc --project tsconfig.maplibre.json",
     "build": "yarn build:maplibre && yarn build:mapbox",
