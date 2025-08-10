@@ -275,14 +275,19 @@ const AxisArrow: React.FC<{
       raycaster.setFromCamera(new Vector2(startX, startY), camera)
       const startRay = raycaster.ray.direction.clone()
       
-      // Project rays onto the axis direction
-      const currentProjection = currentRay.dot(direction) 
-      const startProjection = startRay.dot(direction)
+      // Get the current rotation from the matrix
+      matrix.decompose(_position, _quaternion, _scale)
+      
+      // Transform the axis direction by the current rotation
+      const worldDirection = direction.clone().applyQuaternion(_quaternion)
+      
+      // Project rays onto the rotated axis direction
+      const currentProjection = currentRay.dot(worldDirection) 
+      const startProjection = startRay.dot(worldDirection)
       const deltaProjection = currentProjection - startProjection
       
-      // Calculate new position
-      matrix.decompose(_position, _quaternion, _scale)
-      const delta = direction.clone().multiplyScalar(deltaProjection * scale * 2)
+      // Calculate new position using the rotated direction
+      const delta = worldDirection.multiplyScalar(deltaProjection * scale * 2)
       const newPosition = dragStartRef.current.position.clone().add(delta)
       
       const newMatrix = new Matrix4()
