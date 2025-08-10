@@ -18,7 +18,10 @@ export function EnhancedPivotStory() {
     showRotationY: { value: true, label: 'Show Rotation Y (Green)' },
     showRotationZ: { value: true, label: 'Show Rotation Z (Blue)' },
     showLabels: { value: true, label: 'Show Axis Labels' },
-    controlScale: { value: 500, min: 100, max: 1000, step: 50, label: 'Control Scale' }
+    controlScale: { value: 500, min: 100, max: 1000, step: 50, label: 'Control Scale' },
+    rotationThickness: { value: 0.03, min: 0.01, max: 0.1, step: 0.005, label: 'Rotation Thickness' },
+    translationThickness: { value: 0.015, min: 0.005, max: 0.05, step: 0.005, label: 'Translation Thickness' },
+    arrowHeadSize: { value: 0.05, min: 0.02, max: 0.15, step: 0.01, label: 'Arrow Head Size' }
   })
   const [position, setPosition] = useState<Vector3Tuple>([0, 0, 0]);
   const [rotation, setRotation] = useState<Vector3Tuple>([0, 0, 0]);
@@ -88,6 +91,9 @@ export function EnhancedPivotStory() {
         showRotationZ={origin.showRotationZ}
         showLabels={origin.showLabels}
         scale={origin.controlScale}
+        rotationThickness={origin.rotationThickness}
+        translationThickness={origin.translationThickness}
+        arrowHeadSize={origin.arrowHeadSize}
       />
       <ScreenSizer position={position} rotation={rotation} scale={1}>
         <Sphere
@@ -112,7 +118,10 @@ interface MovingBoxProps {
   showRotationY: boolean,
   showRotationZ: boolean,
   showLabels: boolean,
-  scale: number
+  scale: number,
+  rotationThickness: number,
+  translationThickness: number,
+  arrowHeadSize: number
 }
 
 const _v3 = new Vector3()
@@ -159,7 +168,10 @@ const Move: FC<MovingBoxProps> = ({
   showRotationY,
   showRotationZ,
   showLabels,
-  scale
+  scale,
+  rotationThickness,
+  translationThickness,
+  arrowHeadSize
 }) => {
   const matrix = useMemo(() => {
     const m = new Matrix4();
@@ -206,6 +218,9 @@ const Move: FC<MovingBoxProps> = ({
       onDragEnd={onDragEnd}
       onDrag={onDrag}
       annotations={showLabels}
+      rotationThickness={rotationThickness}
+      translationThickness={translationThickness}
+      arrowHeadSize={arrowHeadSize}
     />
   )
 }

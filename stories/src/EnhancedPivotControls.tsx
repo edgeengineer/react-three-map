@@ -29,6 +29,9 @@ interface PivotControlsProps {
   disableRotations?: boolean | [boolean, boolean, boolean]
   annotations?: boolean
   activeAxes?: [boolean, boolean, boolean]
+  rotationThickness?: number
+  translationThickness?: number
+  arrowHeadSize?: number
 }
 
 interface ContextProps {
@@ -38,12 +41,18 @@ interface ContextProps {
   onDragEnd?: () => void
   onDrag?: (matrix: Matrix4) => void
   matrix: Matrix4
+  rotationThickness: number
+  translationThickness: number
+  arrowHeadSize: number
 }
 
 const Context = createContext<ContextProps>({
   scale: 1,
   annotations: false,
-  matrix: new Matrix4()
+  matrix: new Matrix4(),
+  rotationThickness: 0.03,
+  translationThickness: 0.015,
+  arrowHeadSize: 0.05
 })
 
 const _quaternion = new Quaternion()
@@ -56,7 +65,7 @@ const AxisRotator: React.FC<{
   direction: Vector3
   color: string
 }> = ({ axis, direction, color }) => {
-  const { scale, annotations, onDragStart, onDragEnd, onDrag, matrix } = useContext(Context)
+  const { scale, annotations, onDragStart, onDragEnd, onDrag, matrix, rotationThickness } = useContext(Context)
   const [hovered, setHovered] = useState(false)
   const [dragging, setDragging] = useState(false)
   const [angle, setAngle] = useState(0)
@@ -88,8 +97,8 @@ const AxisRotator: React.FC<{
   
   // Create tube geometry for better raycasting
   const tubeGeometry = useMemo(() => {
-    return new TubeGeometry(curve, segments * 2, scale * 0.03, 8, true)
-  }, [curve, segments, scale])
+    return new TubeGeometry(curve, segments * 2, scale * rotationThickness, 8, true)
+  }, [curve, segments, scale, rotationThickness])
   
   // Create line points for visual representation
   const linePoints = useMemo(() => {
@@ -245,15 +254,15 @@ const AxisArrow: React.FC<{
   direction: Vector3
   color: string
 }> = ({ axis, direction, color }) => {
-  const { scale, onDragStart, onDragEnd, onDrag, matrix } = useContext(Context)
+  const { scale, onDragStart, onDragEnd, onDrag, matrix, translationThickness, arrowHeadSize } = useContext(Context)
   const [hovered, setHovered] = useState(false)
   const [dragging, setDragging] = useState(false)
   const { camera, gl } = useThree()
   const dragStartRef = useRef<{ x: number; y: number; position: Vector3; plane: Vector3 }>()
   
   const arrowLength = scale
-  const cylinderWidth = scale * 0.015
-  const coneWidth = scale * 0.05
+  const cylinderWidth = scale * translationThickness
+  const coneWidth = scale * arrowHeadSize
   const coneLength = scale * 0.2
   
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
@@ -379,7 +388,10 @@ export const EnhancedPivotControls: React.FC<PivotControlsProps> = ({
   disableTranslations = false,
   disableRotations = false,
   annotations = false,
-  activeAxes = [true, true, true]
+  activeAxes = [true, true, true],
+  rotationThickness = 0.03,
+  translationThickness = 0.015,
+  arrowHeadSize = 0.05
 }) => {
   const groupRef = useRef<Group>(null)
   
@@ -389,8 +401,11 @@ export const EnhancedPivotControls: React.FC<PivotControlsProps> = ({
     onDragStart,
     onDragEnd,
     onDrag,
-    matrix
-  }), [scale, annotations, onDragStart, onDragEnd, onDrag, matrix])
+    matrix,
+    rotationThickness,
+    translationThickness,
+    arrowHeadSize
+  }), [scale, annotations, onDragStart, onDragEnd, onDrag, matrix, rotationThickness, translationThickness, arrowHeadSize])
   
   const translationEnabled = useMemo(() => {
     if (typeof disableTranslations === 'boolean') {
