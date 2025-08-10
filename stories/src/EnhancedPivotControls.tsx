@@ -32,6 +32,8 @@ interface PivotControlsProps {
   rotationThickness?: number
   translationThickness?: number
   arrowHeadSize?: number
+  visible?: boolean
+  enabled?: boolean
 }
 
 interface ContextProps {
@@ -44,6 +46,7 @@ interface ContextProps {
   rotationThickness: number
   translationThickness: number
   arrowHeadSize: number
+  enabled: boolean
 }
 
 const Context = createContext<ContextProps>({
@@ -52,7 +55,8 @@ const Context = createContext<ContextProps>({
   matrix: new Matrix4(),
   rotationThickness: 0.03,
   translationThickness: 0.015,
-  arrowHeadSize: 0.05
+  arrowHeadSize: 0.05,
+  enabled: true
 })
 
 const _quaternion = new Quaternion()
@@ -65,7 +69,7 @@ const AxisRotator: React.FC<{
   direction: Vector3
   color: string
 }> = ({ axis, direction, color }) => {
-  const { scale, annotations, onDragStart, onDragEnd, onDrag, matrix, rotationThickness } = useContext(Context)
+  const { scale, annotations, onDragStart, onDragEnd, onDrag, matrix, rotationThickness, enabled } = useContext(Context)
   const [hovered, setHovered] = useState(false)
   const [dragging, setDragging] = useState(false)
   const [angle, setAngle] = useState(0)
@@ -113,6 +117,7 @@ const AxisRotator: React.FC<{
   const dragStartRef = useRef<{ x: number; y: number; rotation: Quaternion }>()
   
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
+    if (!enabled) return
     e.stopPropagation()
     setDragging(true)
     
@@ -212,7 +217,7 @@ const AxisRotator: React.FC<{
         geometry={tubeGeometry}
         visible={false}
         onPointerDown={handlePointerDown}
-        onPointerOver={() => setHovered(true)}
+        onPointerOver={() => enabled && setHovered(true)}
         onPointerOut={() => setHovered(false)}
       >
         <meshBasicMaterial />
@@ -221,9 +226,9 @@ const AxisRotator: React.FC<{
       {/* Visible line */}
       <DreiLine
         points={linePoints}
-        color={hovered || dragging ? '#ffff00' : color}
+        color={enabled ? (hovered || dragging ? '#ffff00' : color) : '#808080'}
         lineWidth={3}
-        opacity={hovered || dragging ? 1 : 0.6}
+        opacity={enabled ? (hovered || dragging ? 1 : 0.6) : 0.3}
         transparent
       />
       
@@ -254,7 +259,7 @@ const AxisArrow: React.FC<{
   direction: Vector3
   color: string
 }> = ({ axis, direction, color }) => {
-  const { scale, onDragStart, onDragEnd, onDrag, matrix, translationThickness, arrowHeadSize } = useContext(Context)
+  const { scale, onDragStart, onDragEnd, onDrag, matrix, translationThickness, arrowHeadSize, enabled } = useContext(Context)
   const [hovered, setHovered] = useState(false)
   const [dragging, setDragging] = useState(false)
   const { camera, gl } = useThree()
@@ -266,6 +271,7 @@ const AxisArrow: React.FC<{
   const coneLength = scale * 0.2
   
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
+    if (!enabled) return
     e.stopPropagation()
     setDragging(true)
     
@@ -358,7 +364,7 @@ const AxisArrow: React.FC<{
         visible={false}
         position={[0, arrowLength / 2, 0]}
         onPointerDown={handlePointerDown}
-        onPointerOver={() => setHovered(true)}
+        onPointerOver={() => enabled && setHovered(true)}
         onPointerOut={() => setHovered(false)}
       >
         <cylinderGeometry args={[coneWidth * 1.4, coneWidth * 1.4, arrowLength, 8, 1]} />
@@ -367,13 +373,21 @@ const AxisArrow: React.FC<{
       {/* Visible arrow shaft */}
       <mesh position={[0, arrowLength / 2, 0]}>
         <cylinderGeometry args={[cylinderWidth, cylinderWidth, arrowLength, 4, 1]} />
-        <meshBasicMaterial color={hovered || dragging ? '#ffff00' : color} />
+        <meshBasicMaterial 
+          color={enabled ? (hovered || dragging ? '#ffff00' : color) : '#808080'} 
+          opacity={enabled ? 1 : 0.3}
+          transparent
+        />
       </mesh>
       
       {/* Arrow head */}
       <mesh position={[0, arrowLength, 0]}>
         <coneGeometry args={[coneWidth, coneLength, 8, 1]} />
-        <meshBasicMaterial color={hovered || dragging ? '#ffff00' : color} />
+        <meshBasicMaterial 
+          color={enabled ? (hovered || dragging ? '#ffff00' : color) : '#808080'}
+          opacity={enabled ? 1 : 0.3}
+          transparent
+        />
       </mesh>
     </group>
   )
@@ -391,7 +405,9 @@ export const EnhancedPivotControls: React.FC<PivotControlsProps> = ({
   activeAxes = [true, true, true],
   rotationThickness = 0.03,
   translationThickness = 0.015,
-  arrowHeadSize = 0.05
+  arrowHeadSize = 0.05,
+  visible = true,
+  enabled = true
 }) => {
   const groupRef = useRef<Group>(null)
   
@@ -404,8 +420,9 @@ export const EnhancedPivotControls: React.FC<PivotControlsProps> = ({
     matrix,
     rotationThickness,
     translationThickness,
-    arrowHeadSize
-  }), [scale, annotations, onDragStart, onDragEnd, onDrag, matrix, rotationThickness, translationThickness, arrowHeadSize])
+    arrowHeadSize,
+    enabled
+  }), [scale, annotations, onDragStart, onDragEnd, onDrag, matrix, rotationThickness, translationThickness, arrowHeadSize, enabled])
   
   const translationEnabled = useMemo(() => {
     if (typeof disableTranslations === 'boolean') {
@@ -429,6 +446,8 @@ export const EnhancedPivotControls: React.FC<PivotControlsProps> = ({
       groupRef.current.matrixWorldNeedsUpdate = true
     }
   }, [matrix])
+  
+  if (!visible) return null
   
   return (
     <Context.Provider value={config}>
