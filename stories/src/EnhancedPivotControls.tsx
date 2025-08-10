@@ -182,9 +182,9 @@ const AxisRotator: React.FC<{
       // Calculate angle between projected vectors
       let angle = Math.acos(Math.max(-1, Math.min(1, projectedStart.dot(projectedCurrent))))
       
-      // Determine rotation direction using cross product
+      // Determine rotation direction using cross product (reversed)
       const cross = new Vector3().crossVectors(projectedStart, projectedCurrent)
-      if (cross.dot(rotationAxis) < 0) angle = -angle
+      if (cross.dot(rotationAxis) > 0) angle = -angle
       
       // Apply the rotation
       const rotationQuaternion = new Quaternion().setFromAxisAngle(rotationAxis, angle)
