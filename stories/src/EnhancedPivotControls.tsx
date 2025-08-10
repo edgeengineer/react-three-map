@@ -60,7 +60,7 @@ const AxisRotator: React.FC<{
   const [hovered, setHovered] = useState(false)
   const [dragging, setDragging] = useState(false)
   const [angle, setAngle] = useState(0)
-  const { camera } = useThree()
+  const { camera, gl } = useThree()
   const raycastMeshRef = useRef<Mesh>(null)
   
   const radius = 0.8 * scale
@@ -129,31 +129,58 @@ const AxisRotator: React.FC<{
   
   const handlePointerMove = (e: PointerEvent) => {
     if (dragging && onDrag && dragStartRef.current) {
-      // Calculate rotation based on mouse movement from start
-      const deltaX = e.clientX - dragStartRef.current.x
-      const deltaY = e.clientY - dragStartRef.current.y
+      // Get current mouse position in NDC
+      const rect = gl.domElement.getBoundingClientRect()
+      const x = ((e.clientX - rect.left) / rect.width) * 2 - 1
+      const y = -((e.clientY - rect.top) / rect.height) * 2 + 1
       
-      // Apply rotation to matrix
+      // Get start mouse position in NDC
+      const startX = ((dragStartRef.current.x - rect.left) / rect.width) * 2 - 1
+      const startY = -((dragStartRef.current.y - rect.top) / rect.height) * 2 + 1
+      
+      // Create rays from camera through mouse positions
+      const raycaster = new Raycaster()
+      raycaster.setFromCamera(new Vector2(x, y), camera)
+      const currentRay = raycaster.ray.direction.clone().normalize()
+      
+      raycaster.setFromCamera(new Vector2(startX, startY), camera)
+      const startRay = raycaster.ray.direction.clone().normalize()
+      
+      // Get the rotation axis vector
+      const rotationAxis = new Vector3()
+      if (axis === 0) rotationAxis.set(1, 0, 0) // X axis
+      else if (axis === 1) rotationAxis.set(0, 1, 0) // Y axis
+      else rotationAxis.set(0, 0, 1) // Z axis
+      
+      // Apply current rotation to the axis
       matrix.decompose(_position, _quaternion, _scale)
-      const rotationMatrix = new Matrix4()
-      const deltaAngle = (deltaX - deltaY) * 0.01 // Use combined mouse movement
+      rotationAxis.applyQuaternion(_quaternion)
       
-      if (axis === 0) rotationMatrix.makeRotationX(deltaAngle)
-      else if (axis === 1) rotationMatrix.makeRotationY(deltaAngle)
-      else rotationMatrix.makeRotationZ(deltaAngle)
+      // Project rays onto the plane perpendicular to rotation axis
+      const projectedStart = startRay.clone().sub(
+        rotationAxis.clone().multiplyScalar(startRay.dot(rotationAxis))
+      ).normalize()
       
-      // Use the original rotation and apply the delta
-      const newQuaternion = dragStartRef.current.rotation.clone()
-      newQuaternion.multiplyQuaternions(
-        new Quaternion().setFromRotationMatrix(rotationMatrix),
-        dragStartRef.current.rotation
-      )
+      const projectedCurrent = currentRay.clone().sub(
+        rotationAxis.clone().multiplyScalar(currentRay.dot(rotationAxis))
+      ).normalize()
+      
+      // Calculate angle between projected vectors
+      let angle = Math.acos(Math.max(-1, Math.min(1, projectedStart.dot(projectedCurrent))))
+      
+      // Determine rotation direction using cross product
+      const cross = new Vector3().crossVectors(projectedStart, projectedCurrent)
+      if (cross.dot(rotationAxis) < 0) angle = -angle
+      
+      // Apply the rotation
+      const rotationQuaternion = new Quaternion().setFromAxisAngle(rotationAxis, angle)
+      const newQuaternion = rotationQuaternion.multiply(dragStartRef.current.rotation)
       
       const newMatrix = new Matrix4()
       newMatrix.compose(_position, newQuaternion, _scale)
       onDrag(newMatrix)
       
-      setAngle(deltaAngle)
+      setAngle(angle)
     }
   }
   
