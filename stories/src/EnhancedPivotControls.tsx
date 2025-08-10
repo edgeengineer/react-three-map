@@ -88,7 +88,7 @@ const AxisRotator: React.FC<{
   
   // Create tube geometry for better raycasting
   const tubeGeometry = useMemo(() => {
-    return new TubeGeometry(curve, segments * 2, scale * 0.02, 8, true)
+    return new TubeGeometry(curve, segments * 2, scale * 0.03, 8, true)
   }, [curve, segments, scale])
   
   // Create line points for visual representation
@@ -252,8 +252,8 @@ const AxisArrow: React.FC<{
   const dragStartRef = useRef<{ x: number; y: number; position: Vector3; plane: Vector3 }>()
   
   const arrowLength = scale
-  const cylinderWidth = scale * 0.02
-  const coneWidth = scale * 0.06
+  const cylinderWidth = scale * 0.015
+  const coneWidth = scale * 0.05
   const coneLength = scale * 0.2
   
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
