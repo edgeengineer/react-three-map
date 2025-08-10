@@ -92,7 +92,7 @@ export function EnhancedPivotStory() {
       <ScreenSizer position={position} rotation={rotation} scale={1}>
         <Sphere
           args={[50]}
-          position={[0, 25, 0]}
+          position={[0, 0, 0]}
           material-color={'orange'}
         />
       </ScreenSizer>
