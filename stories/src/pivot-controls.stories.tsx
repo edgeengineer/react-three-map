@@ -1,4 +1,4 @@
-import { PivotControls, ScreenSizer, Sphere } from "@react-three/drei";
+import { Box, PivotControls, ScreenSizer, Sphere } from "@react-three/drei";
 import { useControls } from "leva";
 import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { Marker as MapboxMarker } from "react-map-gl/mapbox";
@@ -12,7 +12,8 @@ import { StoryMap } from "./story-map";
 export function Default() {
   const origin = useControls({
     latitude: { value: 51, min: -90, max: 90 },
-    longitude: { value: 0, min: -180, max: 180 }
+    longitude: { value: 0, min: -180, max: 180 },
+    altitude: { value: 0, min: -1000, max: 10000, step: 10 }
   })
   const [position, setPosition] = useState<Vector3Tuple>([0, 0, 0]);
   const geoPos = useMemo(() => vector3ToCoords(position, origin), [position, origin])
@@ -25,6 +26,7 @@ export function Default() {
       {...origin}
       zoom={13}
       pitch={60}
+      canvas={{ altitude: origin.altitude }}
       maplibreChildren={(
         <MaplibreMarker {...geoPos}>
           <div style={{ fontSize: 18 }}>lat: {geoPos.latitude}<br />lon: {geoPos.longitude}</div>
@@ -36,6 +38,8 @@ export function Default() {
         </MapboxMarker>
       )}
     >
+      <ambientLight intensity={0.5} />
+      <directionalLight position={[10, 10, 5]} intensity={0.5} />
       <Move position={position} setPosition={setPosition} />
       <ScreenSizer position={position} scale={1}>
         <Sphere
@@ -44,6 +48,7 @@ export function Default() {
           material-color={'orange'}
         />
       </ScreenSizer>
+      <InteractiveBoxes />
       <axesHelper position={position} args={[1000]} />
     </StoryMap>
   </div>
@@ -55,6 +60,37 @@ interface MovingBoxProps {
 }
 
 const _v3 = new Vector3()
+
+const InteractiveBoxes: FC = () => {
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  
+  const positions: Vector3Tuple[] = [
+    [-500, 0, -500],
+    [500, 0, -500],
+    [-500, 0, 500],
+    [500, 0, 500],
+    [0, 200, 0],
+    [0, -200, 0]
+  ];
+  
+  return (
+    <>
+      {positions.map((pos, index) => (
+        <Box
+          key={index}
+          position={pos}
+          args={[100, 100, 100]}
+          onPointerOver={() => setHoveredIndex(index)}
+          onPointerOut={() => setHoveredIndex(null)}
+        >
+          <meshStandardMaterial 
+            color={hoveredIndex === index ? 'hotpink' : 'lightblue'} 
+          />
+        </Box>
+      ))}
+    </>
+  );
+};
 
 const Move: FC<MovingBoxProps> = ({ position, setPosition }) => {
   const matrix = useMemo(() => new Matrix4().setPosition(...position), [position]);
@@ -74,7 +110,7 @@ const Move: FC<MovingBoxProps> = ({ position, setPosition }) => {
     <PivotControls
       fixed
       matrix={matrix}
-      activeAxes={[true, false, true]}
+      activeAxes={[true, true, true]}
       disableRotations
       scale={500}
       onDragStart={onDragStart}
