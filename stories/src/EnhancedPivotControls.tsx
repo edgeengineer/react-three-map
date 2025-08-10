@@ -13,7 +13,7 @@ import {
   Raycaster,
   Vector2
 } from 'three'
-import { Html, Line as DreiLine } from '@react-three/drei'
+import { Html } from '@react-three/drei'
 
 // Extend Three.js objects for React Three Fiber
 extend({ Group, Matrix4, Mesh, MeshBasicMaterial, TubeGeometry })
@@ -32,6 +32,8 @@ interface PivotControlsProps {
   rotationThickness?: number
   translationThickness?: number
   arrowHeadSize?: number
+  arrowLength?: number
+  arrowHeadLength?: number
   visible?: boolean
   enabled?: boolean
 }
@@ -46,6 +48,8 @@ interface ContextProps {
   rotationThickness: number
   translationThickness: number
   arrowHeadSize: number
+  arrowLength: number
+  arrowHeadLength: number
   enabled: boolean
 }
 
@@ -56,6 +60,8 @@ const Context = createContext<ContextProps>({
   rotationThickness: 0.03,
   translationThickness: 0.015,
   arrowHeadSize: 0.05,
+  arrowLength: 1,
+  arrowHeadLength: 0.2,
   enabled: true
 })
 
@@ -101,18 +107,8 @@ const AxisRotator: React.FC<{
   
   // Create tube geometry for better raycasting
   const tubeGeometry = useMemo(() => {
-    return new TubeGeometry(curve, segments * 2, scale * rotationThickness, 8, true)
-  }, [curve, segments, scale, rotationThickness])
-  
-  // Create line points for visual representation
-  const linePoints = useMemo(() => {
-    const points: number[] = []
-    const curvePoints = curve.getPoints(segments)
-    curvePoints.forEach(p => {
-      points.push(p.x, p.y, p.z)
-    })
-    return points
-  }, [curve, segments])
+    return new TubeGeometry(curve, segments * 2, radius * rotationThickness, 8, true)
+  }, [curve, segments, radius, rotationThickness])
   
   const dragStartRef = useRef<{ x: number; y: number; rotation: Quaternion }>()
   
@@ -211,26 +207,20 @@ const AxisRotator: React.FC<{
   
   return (
     <group>
-      {/* Invisible tube mesh for raycasting */}
+      {/* Visible tube mesh for both raycasting and display */}
       <mesh
         ref={raycastMeshRef}
         geometry={tubeGeometry}
-        visible={false}
         onPointerDown={handlePointerDown}
         onPointerOver={() => enabled && setHovered(true)}
         onPointerOut={() => setHovered(false)}
       >
-        <meshBasicMaterial />
+        <meshBasicMaterial 
+          color={enabled ? (hovered || dragging ? '#ffff00' : color) : '#808080'}
+          opacity={enabled ? (hovered || dragging ? 1 : 0.6) : 0.3}
+          transparent
+        />
       </mesh>
-      
-      {/* Visible line */}
-      <DreiLine
-        points={linePoints}
-        color={enabled ? (hovered || dragging ? '#ffff00' : color) : '#808080'}
-        lineWidth={3}
-        opacity={enabled ? (hovered || dragging ? 1 : 0.6) : 0.3}
-        transparent
-      />
       
       {/* Annotation */}
       {annotations && dragging && (
@@ -259,16 +249,16 @@ const AxisArrow: React.FC<{
   direction: Vector3
   color: string
 }> = ({ axis, direction, color }) => {
-  const { scale, onDragStart, onDragEnd, onDrag, matrix, translationThickness, arrowHeadSize, enabled } = useContext(Context)
+  const { scale, onDragStart, onDragEnd, onDrag, matrix, translationThickness, arrowHeadSize, arrowLength: arrowLengthProp, arrowHeadLength, enabled } = useContext(Context)
   const [hovered, setHovered] = useState(false)
   const [dragging, setDragging] = useState(false)
   const { camera, gl } = useThree()
   const dragStartRef = useRef<{ x: number; y: number; position: Vector3; plane: Vector3 }>()
   
-  const arrowLength = scale
+  const arrowLength = scale * arrowLengthProp
   const cylinderWidth = scale * translationThickness
   const coneWidth = scale * arrowHeadSize
-  const coneLength = scale * 0.2
+  const coneLength = scale * arrowHeadLength
   
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
     if (!enabled) return
@@ -359,15 +349,15 @@ const AxisArrow: React.FC<{
   
   return (
     <group rotation={rotation}>
-      {/* Invisible cylinder for raycasting */}
+      {/* Invisible cylinder for raycasting - covers entire arrow */}
       <mesh
         visible={false}
-        position={[0, arrowLength / 2, 0]}
+        position={[0, (arrowLength + coneLength) / 2, 0]}
         onPointerDown={handlePointerDown}
         onPointerOver={() => enabled && setHovered(true)}
         onPointerOut={() => setHovered(false)}
       >
-        <cylinderGeometry args={[coneWidth * 1.4, coneWidth * 1.4, arrowLength, 8, 1]} />
+        <cylinderGeometry args={[coneWidth * 1.4, coneWidth * 1.4, arrowLength + coneLength, 8, 1]} />
       </mesh>
       
       {/* Visible arrow shaft */}
@@ -380,8 +370,8 @@ const AxisArrow: React.FC<{
         />
       </mesh>
       
-      {/* Arrow head */}
-      <mesh position={[0, arrowLength, 0]}>
+      {/* Arrow head - positioned so base touches cylinder end */}
+      <mesh position={[0, arrowLength + coneLength / 2, 0]}>
         <coneGeometry args={[coneWidth, coneLength, 8, 1]} />
         <meshBasicMaterial 
           color={enabled ? (hovered || dragging ? '#ffff00' : color) : '#808080'}
@@ -406,6 +396,8 @@ export const EnhancedPivotControls: React.FC<PivotControlsProps> = ({
   rotationThickness = 0.03,
   translationThickness = 0.015,
   arrowHeadSize = 0.05,
+  arrowLength = 1,
+  arrowHeadLength = 0.2,
   visible = true,
   enabled = true
 }) => {
@@ -421,8 +413,10 @@ export const EnhancedPivotControls: React.FC<PivotControlsProps> = ({
     rotationThickness,
     translationThickness,
     arrowHeadSize,
+    arrowLength,
+    arrowHeadLength,
     enabled
-  }), [scale, annotations, onDragStart, onDragEnd, onDrag, matrix, rotationThickness, translationThickness, arrowHeadSize, enabled])
+  }), [scale, annotations, onDragStart, onDragEnd, onDrag, matrix, rotationThickness, translationThickness, arrowHeadSize, arrowLength, arrowHeadLength, enabled])
   
   const translationEnabled = useMemo(() => {
     if (typeof disableTranslations === 'boolean') {

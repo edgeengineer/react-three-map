@@ -21,7 +21,9 @@ export function EnhancedPivotStory() {
     controlScale: { value: 500, min: 100, max: 1000, step: 50, label: 'Control Scale' },
     rotationThickness: { value: 0.06, min: 0.01, max: 0.1, step: 0.005, label: 'Rotation Thickness' },
     translationThickness: { value: 0.015, min: 0.005, max: 0.05, step: 0.005, label: 'Translation Thickness' },
-    arrowHeadSize: { value: 0.05, min: 0.02, max: 0.15, step: 0.01, label: 'Arrow Head Size' }
+    arrowHeadSize: { value: 0.05, min: 0.02, max: 0.15, step: 0.01, label: 'Arrow Head Size' },
+    arrowLength: { value: 1, min: 0.5, max: 2, step: 0.1, label: 'Arrow Length' },
+    arrowHeadLength: { value: 0.2, min: 0.1, max: 0.5, step: 0.05, label: 'Arrow Head Length' }
   })
   const [position, setPosition] = useState<Vector3Tuple>([0, 0, 0]);
   const [rotation, setRotation] = useState<Vector3Tuple>([0, 0, 0]);
@@ -156,6 +158,8 @@ export function EnhancedPivotStory() {
         rotationThickness={origin.rotationThickness}
         translationThickness={origin.translationThickness}
         arrowHeadSize={origin.arrowHeadSize}
+        arrowLength={origin.arrowLength}
+        arrowHeadLength={origin.arrowHeadLength}
       />
       <Cone
         args={[50, 100, 8]}
@@ -188,7 +192,9 @@ interface MovingBoxProps {
   scale: number,
   rotationThickness: number,
   translationThickness: number,
-  arrowHeadSize: number
+  arrowHeadSize: number,
+  arrowLength: number,
+  arrowHeadLength: number
 }
 
 const _v3 = new Vector3()
@@ -280,7 +286,9 @@ const Move: FC<MovingBoxProps> = ({
   scale,
   rotationThickness,
   translationThickness,
-  arrowHeadSize
+  arrowHeadSize,
+  arrowLength,
+  arrowHeadLength
 }) => {
   const matrix = useMemo(() => {
     const m = new Matrix4();
@@ -330,6 +338,8 @@ const Move: FC<MovingBoxProps> = ({
       rotationThickness={rotationThickness}
       translationThickness={translationThickness}
       arrowHeadSize={arrowHeadSize}
+      arrowLength={arrowLength}
+      arrowHeadLength={arrowHeadLength}
     />
   )
 }
@@ -347,7 +357,9 @@ export function EnhancedPivotWithScreenSizer() {
     controlScale: { value: 500, min: 100, max: 1000, step: 50, label: 'Control Scale' },
     rotationThickness: { value: 0.06, min: 0.01, max: 0.1, step: 0.005, label: 'Rotation Thickness' },
     translationThickness: { value: 0.015, min: 0.005, max: 0.05, step: 0.005, label: 'Translation Thickness' },
-    arrowHeadSize: { value: 0.05, min: 0.02, max: 0.15, step: 0.01, label: 'Arrow Head Size' }
+    arrowHeadSize: { value: 0.05, min: 0.02, max: 0.15, step: 0.01, label: 'Arrow Head Size' },
+    arrowLength: { value: 1, min: 0.5, max: 2, step: 0.1, label: 'Arrow Length' },
+    arrowHeadLength: { value: 0.2, min: 0.1, max: 0.5, step: 0.05, label: 'Arrow Head Length' }
   })
   const [conePosition, setConePosition] = useState<Vector3Tuple>([0, 0, 0]);
   const [coneRotation, setConeRotation] = useState<Vector3Tuple>([0, 0, 0]);
@@ -422,6 +434,8 @@ export function EnhancedPivotWithScreenSizer() {
         rotationThickness={origin.rotationThickness}
         translationThickness={origin.translationThickness}
         arrowHeadSize={origin.arrowHeadSize}
+        arrowLength={origin.arrowLength}
+        arrowHeadLength={origin.arrowHeadLength}
       />
       <ScreenSizer position={conePosition} rotation={coneRotation} scale={1}>
         <Cone
