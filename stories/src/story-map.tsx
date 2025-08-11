@@ -22,6 +22,8 @@ export interface StoryMapProps extends PropsWithChildren {
   mapChildren?: ReactNode,
   mapboxChildren?: ReactNode,
   maplibreChildren?: ReactNode,
+  maplibreStyle?: any,
+  mapboxStyle?: any,
 }
 
 /** `<Map>` styled for stories */

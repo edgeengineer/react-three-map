@@ -2,20 +2,70 @@ import { ThemeState, useLadleContext } from '@ladle/react';
 import MapLibre from "maplibre-gl";
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { FC, memo, useEffect, useRef } from "react";
-import Map, { useMap } from 'react-map-gl/maplibre';
+import Map, { useMap, NavigationControl, TerrainControl } from 'react-map-gl/maplibre';
 import { StoryMapProps } from '../story-map';
 import { Canvas } from 'react-three-map/maplibre';
 
+// Component to setup terrain after map loads
+const TerrainSetup: FC<{ terrain?: any }> = ({ terrain }) => {
+  const { current: map } = useMap();
+  
+  useEffect(() => {
+    if (!map || !terrain) return;
+    
+    const setupTerrain = () => {
+      console.log('Setting up terrain:', terrain);
+      
+      // Check if source exists from the style, if not add it
+      if (terrain.source && !map.getSource(terrain.source)) {
+        // Try to find the source definition in the style
+        const style = map.getStyle();
+        console.log('Current style sources:', style?.sources);
+        
+        if (style && style.sources && style.sources[terrain.source]) {
+          // Source already exists in style, just set terrain
+          console.log('Setting terrain with existing source:', terrain.source);
+          (map as any).setTerrain(terrain);
+        } else {
+          // Need to add the source first - this shouldn't happen with proper style config
+          console.warn('Terrain source not found in style:', terrain.source);
+        }
+      } else if (terrain.source) {
+        // Source exists, set terrain
+        console.log('Source exists, setting terrain:', terrain);
+        (map as any).setTerrain(terrain);
+      }
+    };
+    
+    if (map.loaded()) {
+      console.log('Map already loaded, setting up terrain immediately');
+      setupTerrain();
+    } else {
+      console.log('Map not loaded yet, waiting for load event');
+      map.on('load', setupTerrain);
+    }
+    
+    return () => {
+      // Cleanup if needed
+    };
+  }, [map, terrain]);
+  
+  return null;
+};
+
 /** Maplibre `<Map>` styled for stories */
-export const StoryMaplibre: FC<Omit<StoryMapProps, 'mapboxChildren'>> = ({
-  latitude, longitude, canvas, mapChildren, maplibreChildren, children, ...rest
+export const StoryMaplibre: FC<Omit<StoryMapProps, 'mapboxChildren' | 'mapboxStyle'>> = ({
+  latitude, longitude, canvas, mapChildren, maplibreChildren, children, maplibreStyle, ...rest
 }) => {
 
   const theme = useLadleContext().globalState.theme;
 
-  const mapStyle = theme === ThemeState.Dark
+  const defaultMapStyle = theme === ThemeState.Dark
     ? "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"
     : "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json";
+  
+  const mapStyle = maplibreStyle || defaultMapStyle;
+  const showTerrainControl = maplibreStyle?.terrain ? true : false;
 
   return <div style={{ height: '100vh', position: 'relative' }}>
     <Map
@@ -28,6 +78,16 @@ export const StoryMaplibre: FC<Omit<StoryMapProps, 'mapboxChildren'>> = ({
       mapStyle={mapStyle}
     >
       <FlyTo latitude={latitude} longitude={longitude} zoom={rest.zoom} />
+      {maplibreStyle?.terrain && <TerrainSetup terrain={maplibreStyle.terrain} />}
+      {showTerrainControl && maplibreStyle?.terrain?.source && (
+        <>
+          <NavigationControl position="top-left" />
+          <TerrainControl 
+            source={maplibreStyle.terrain.source}
+            exaggeration={maplibreStyle.terrain.exaggeration || 1}
+          />
+        </>
+      )}
       {mapChildren}
       {maplibreChildren}
       <Canvas latitude={latitude} longitude={longitude} {...canvas}>

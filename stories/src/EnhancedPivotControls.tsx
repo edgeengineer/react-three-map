@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useMemo, useRef, useState } from 'react'
+import React, { createContext, useContext, useMemo, useRef, useState, useCallback } from 'react'
 import { extend, useThree, ThreeEvent } from '@react-three/fiber'
 import { 
   Group, 
@@ -115,6 +115,11 @@ const AxisRotator: React.FC<{
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
     if (!enabled) return
     e.stopPropagation()
+    // Prevent the event from reaching the map
+    if (e.nativeEvent) {
+      e.nativeEvent.stopPropagation()
+      // Don't use preventDefault as it causes issues with passive event listeners
+    }
     setDragging(true)
     
     // Store initial rotation
@@ -128,16 +133,16 @@ const AxisRotator: React.FC<{
     onDragStart?.()
   }
   
-  const handlePointerUp = () => {
+  const handlePointerUp = useCallback(() => {
     if (dragging) {
       setDragging(false)
       setAngle(0)
       dragStartRef.current = undefined
       onDragEnd?.()
     }
-  }
+  }, [dragging, onDragEnd])
   
-  const handlePointerMove = (e: PointerEvent) => {
+  const handlePointerMove = useCallback((e: PointerEvent) => {
     if (dragging && onDrag && dragStartRef.current) {
       // Get current mouse position in NDC
       const rect = gl.domElement.getBoundingClientRect()
@@ -192,7 +197,7 @@ const AxisRotator: React.FC<{
       
       setAngle(angle)
     }
-  }
+  }, [dragging, onDrag, gl, camera, axis, matrix])
   
   React.useEffect(() => {
     if (dragging) {
@@ -203,7 +208,7 @@ const AxisRotator: React.FC<{
         window.removeEventListener('pointerup', handlePointerUp)
       }
     }
-  }, [dragging, angle])
+  }, [dragging, handlePointerMove, handlePointerUp])
   
   return (
     <group>
@@ -263,6 +268,11 @@ const AxisArrow: React.FC<{
   const handlePointerDown = (e: ThreeEvent<PointerEvent>) => {
     if (!enabled) return
     e.stopPropagation()
+    // Prevent the event from reaching the map
+    if (e.nativeEvent) {
+      e.nativeEvent.stopPropagation()
+      // Don't use preventDefault as it causes issues with passive event listeners
+    }
     setDragging(true)
     
     // Store initial position
@@ -282,15 +292,15 @@ const AxisArrow: React.FC<{
     onDragStart?.()
   }
   
-  const handlePointerUp = () => {
+  const handlePointerUp = useCallback(() => {
     if (dragging) {
       setDragging(false)
       dragStartRef.current = undefined
       onDragEnd?.()
     }
-  }
+  }, [dragging, onDragEnd])
   
-  const handlePointerMove = (e: PointerEvent) => {
+  const handlePointerMove = useCallback((e: PointerEvent) => {
     if (dragging && onDrag && dragStartRef.current) {
       // Calculate translation based on screen space movement
       const rect = gl.domElement.getBoundingClientRect()
@@ -326,7 +336,7 @@ const AxisArrow: React.FC<{
       newMatrix.compose(newPosition, _quaternion, _scale)
       onDrag(newMatrix)
     }
-  }
+  }, [dragging, onDrag, gl, camera, direction, matrix, scale])
   
   React.useEffect(() => {
     if (dragging) {
@@ -337,7 +347,7 @@ const AxisArrow: React.FC<{
         window.removeEventListener('pointerup', handlePointerUp)
       }
     }
-  }, [dragging])
+  }, [dragging, handlePointerMove, handlePointerUp])
   
   const rotation = useMemo(() => {
     const euler = new Euler()

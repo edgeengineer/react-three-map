@@ -8,8 +8,8 @@ import { Canvas } from 'react-three-map';
 import { StoryMapProps } from '../story-map';
 
 /** `<Map>` styled for stories */
-export const StoryMapbox: FC<Omit<StoryMapProps, 'maplibreChildren'>> = ({
-  latitude, longitude, canvas, children, mapChildren, mapboxChildren, ...rest
+export const StoryMapbox: FC<Omit<StoryMapProps, 'maplibreChildren' | 'maplibreStyle'>> = ({
+  latitude, longitude, canvas, children, mapChildren, mapboxChildren, mapboxStyle, ...rest
 }) => {
 
   const { mapboxToken } = useControls({
@@ -21,9 +21,11 @@ export const StoryMapbox: FC<Omit<StoryMapProps, 'maplibreChildren'>> = ({
 
   const theme = useLadleContext().globalState.theme;
 
-  const mapStyle = theme === ThemeState.Dark
+  const defaultMapStyle = theme === ThemeState.Dark
     ? "mapbox://styles/mapbox/dark-v11"
     : "mapbox://styles/mapbox/streets-v12";
+  
+  const mapStyle = mapboxStyle || defaultMapStyle;
 
   Mapbox.accessToken = mapboxToken;
 
