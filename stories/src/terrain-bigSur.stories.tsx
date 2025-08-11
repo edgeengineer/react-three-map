@@ -118,13 +118,6 @@ export function TerrainWithPivotControls() {
         const map = e.target;
         console.log('Map loaded', map);
         
-        // Log terrain source loading
-        map.on('sourcedata', (e: any) => {
-          if (e.sourceId === 'terrainSource' || e.sourceId === 'hillshadeSource') {
-            console.log(`Source ${e.sourceId} loaded:`, e);
-          }
-        });
-        
         // Check if terrain source is loaded
         const terrainSource = map.getSource('terrainSource');
         const hillshadeSource = map.getSource('hillshadeSource');
@@ -239,8 +232,6 @@ const Move: FC<MovingBoxProps> = ({
       map.dragPan.disable();
       map.dragRotate.disable();
       map.doubleClickZoom.disable();
-      // Force immediate repaint to prevent terrain from disappearing
-      map.triggerRepaint();
     }
   }, [map]);
 
@@ -253,29 +244,22 @@ const Move: FC<MovingBoxProps> = ({
         map.dragPan.enable();
         map.dragRotate.enable();
         map.doubleClickZoom.enable();
-        map.triggerRepaint();
       }, 50);
     }
   }, [map]);
 
-  // Force continuous repaints during dragging to keep terrain visible
+  // Only trigger repaints at a reasonable rate during dragging
   useEffect(() => {
     if (isDragging && map) {
-      let animationId: number;
-      const animate = () => {
+      // Throttle repaints to 30fps instead of 60fps to reduce load
+      const interval = setInterval(() => {
         if (map && map.triggerRepaint) {
           map.triggerRepaint();
         }
-        if (isDragging) {
-          animationId = requestAnimationFrame(animate);
-        }
-      };
-      animationId = requestAnimationFrame(animate);
+      }, 33); // ~30fps
 
       return () => {
-        if (animationId) {
-          cancelAnimationFrame(animationId);
-        }
+        clearInterval(interval);
       };
     }
   }, [isDragging, map]);
