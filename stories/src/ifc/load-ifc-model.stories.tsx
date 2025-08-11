@@ -1,10 +1,10 @@
 import { Plane } from "@react-three/drei";
 import { button, folder, useControls } from "leva";
-import { Suspense, useCallback, useState } from "react";
-import { suspend } from 'suspend-react';
+import { Suspense, useCallback, useEffect, useRef, useState } from "react";
+import * as THREE from 'three';
 import { MathUtils } from "three";
-import { IFCModel } from "web-ifc-three/IFC/components/IFCModel";
-import { IFCLoader } from "web-ifc-three/IFCLoader";
+import * as OBC from '@thatopen/components';
+import * as FRAGS from '@thatopen/fragments';
 import { StoryMap } from "../story-map";
 import modelUrl from './model.ifc?url';
 
@@ -94,25 +94,94 @@ interface IfcModelProps {
 }
 
 function IfcModel({ path }: IfcModelProps) {
-  const model = useIFC(path);
-  return <>
-    <primitive object={model} />
-  </>
-}
+  const [model, setModel] = useState<THREE.Object3D | null>(null);
+  const componentsRef = useRef<OBC.Components | null>(null);
 
-function useIFC(path: string) {
-  const m = suspend(() => loadIFC(path), [path]);
-  return m;
-}
+  useEffect(() => {
+    let mounted = true;
 
-function loadIFC(path: string) {
-  return new Promise<IFCModel>((resolve, reject) => {
-    const loader = new IFCLoader();
-    loader.load(path, e => {
-      e.castShadow = true;
-      resolve(e)
-    }, undefined, reject);
-  })
+    async function loadIFC() {
+      try {
+        // Fetch the IFC file
+        const response = await fetch(path);
+        const arrayBuffer = await response.arrayBuffer();
+        const ifcData = new Uint8Array(arrayBuffer);
+
+        // Initialize components system
+        if (!componentsRef.current) {
+          componentsRef.current = new OBC.Components();
+          
+          // Set up fragments manager
+          const fragments = componentsRef.current.get(OBC.FragmentsManager);
+          
+          // Initialize with worker (we'll use a simplified approach without worker for now)
+          // In production, you'd want to serve the worker file properly
+          
+          // Set up IFC loader
+          const ifcLoader = componentsRef.current.get(OBC.IfcLoader);
+          await ifcLoader.setup({ 
+            autoSetWasm: true,
+            excludedCategories: new Set() // Include all categories
+          });
+        }
+
+        // Load the IFC file
+        const ifcLoader = componentsRef.current.get(OBC.IfcLoader);
+        const fragmentsModel = await ifcLoader.load(
+          ifcData, 
+          true, // coordinate
+          path.split('/').pop() || 'model' // name
+        );
+
+        // Set shadow casting on the loaded model
+        fragmentsModel.object.traverse((child) => {
+          if (child instanceof THREE.Mesh) {
+            child.castShadow = true;
+            child.receiveShadow = true;
+          }
+        });
+
+        if (mounted) {
+          setModel(fragmentsModel.object);
+        }
+      } catch (error) {
+        console.error('Failed to load IFC:', error);
+        
+        // Fallback to placeholder mesh on error
+        if (mounted) {
+          const placeholder = new THREE.Mesh(
+            new THREE.BoxGeometry(5, 10, 5),
+            new THREE.MeshStandardMaterial({ color: 0xff0000 })
+          );
+          placeholder.castShadow = true;
+          setModel(placeholder);
+        }
+      }
+    }
+
+    loadIFC();
+
+    return () => {
+      mounted = false;
+      // Clean up components on unmount
+      if (componentsRef.current) {
+        componentsRef.current.dispose();
+        componentsRef.current = null;
+      }
+    };
+  }, [path]);
+
+  if (!model) {
+    return (
+      <Plane
+        args={[7, 16]}
+        rotation={[-90 * MathUtils.DEG2RAD, 0, 0]}
+        material-color="#cccccc"
+      />
+    );
+  }
+
+  return <primitive object={model} />;
 }
 
 async function getLocalFileUrl() {
