@@ -117,20 +117,19 @@ export function TerrainWithPivotControls() {
       onLoad={(e) => {
         const map = e.target;
         console.log('Map loaded', map);
-        
+
         // Check if terrain source is loaded
         const terrainSource = map.getSource('terrainSource');
         const hillshadeSource = map.getSource('hillshadeSource');
         console.log('Terrain source:', terrainSource);
         console.log('Hillshade source:', hillshadeSource);
-        
+
         // Force terrain update
         if (terrainSource) {
           map.setTerrain({
             source: 'terrainSource',
             exaggeration: origin.terrainExaggeration
           });
-          console.log('Terrain configured with exaggeration:', origin.terrainExaggeration);
         }
       }}
     >
