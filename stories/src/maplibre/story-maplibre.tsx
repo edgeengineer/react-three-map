@@ -25,7 +25,12 @@ const TerrainSetup: FC<{ terrain?: any }> = ({ terrain }) => {
         if (style && style.sources && style.sources[terrain.source]) {
           // Source already exists in style, just set terrain
           console.log('Setting terrain with existing source:', terrain.source);
-          (map as any).setTerrain(terrain);
+          // Check if setTerrain method exists
+          if (typeof (map as any).setTerrain === 'function') {
+            (map as any).setTerrain(terrain);
+          } else {
+            console.warn('setTerrain is not available in this MapLibre version');
+          }
         } else {
           // Need to add the source first - this shouldn't happen with proper style config
           console.warn('Terrain source not found in style:', terrain.source);
@@ -33,7 +38,12 @@ const TerrainSetup: FC<{ terrain?: any }> = ({ terrain }) => {
       } else if (terrain.source) {
         // Source exists, set terrain
         console.log('Source exists, setting terrain:', terrain);
-        (map as any).setTerrain(terrain);
+        // Check if setTerrain method exists (it may not in all MapLibre versions)
+        if (typeof (map as any).setTerrain === 'function') {
+          (map as any).setTerrain(terrain);
+        } else {
+          console.warn('setTerrain is not available in this MapLibre version');
+        }
       }
     };
     
