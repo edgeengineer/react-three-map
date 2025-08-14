@@ -1,13 +1,14 @@
 import React, { useMemo } from 'react';
 import * as THREE from 'three';
-import { Text } from '@react-three/drei';
+import { Text, Billboard } from '@react-three/drei';
 
 export interface Compass3DProps {
   cylinderLength?: number;
   cylinderRadius?: number;
   sphereRadius?: number;
   position?: [number, number, number];
-  rotation?: [number, number, number];
+  bearing?: number;  // Map bearing in degrees
+  pitch?: number;    // Map pitch in degrees
   scale?: number;
 }
 
@@ -16,14 +17,26 @@ export const Compass3D: React.FC<Compass3DProps> = ({
   cylinderRadius = 0.05,
   sphereRadius = 0.2,
   position = [0, 0, 0],
-  rotation = [0, 0, 0],
+  bearing = 0,
+  pitch = 0,
   scale = 1
 }) => {
+  // Calculate rotation based on bearing and pitch
+  // The compass needs to rotate to match the map's orientation
+  // Camera is at [3,3,3] looking at origin, creating a 45° isometric view
+  // We need to compensate for this camera angle
+  const rotation = useMemo(() => {
+    // When bearing = 0, North should point toward screen top
+    // When bearing = 90, East should point toward screen top (90° clockwise rotation)
+    const yRotation = THREE.MathUtils.degToRad(bearing + 135); // 135° offset for isometric camera alignment
+    const xRotation = THREE.MathUtils.degToRad(pitch);
+    return [xRotation, yRotation, 0] as [number, number, number];
+  }, [bearing, pitch]);
   // Colors for each axis
   const colors = {
-    x: '#ff0000', // Red for E-W
+    x: '#0000ff', // Blue for N-S (X-axis points North-South)
     y: '#00ff00', // Green for Up-Down
-    z: '#0000ff'  // Blue for N-S
+    z: '#ff0000'  // Red for E-W (Z-axis points East-West)
   };
 
   // Calculate positions for spheres and text
@@ -31,7 +44,7 @@ export const Compass3D: React.FC<Compass3DProps> = ({
   
   return (
     <group position={position} rotation={rotation} scale={scale}>
-      {/* X-axis (East-West) */}
+      {/* X-axis (North-South) */}
       <group>
         {/* Cylinder */}
         <mesh rotation={[0, 0, Math.PI / 2]}>
@@ -39,37 +52,37 @@ export const Compass3D: React.FC<Compass3DProps> = ({
           <meshStandardMaterial color={colors.x} />
         </mesh>
         
-        {/* East sphere */}
+        {/* North sphere */}
         <mesh position={[halfLength, 0, 0]}>
           <sphereGeometry args={[sphereRadius, 16, 16]} />
           <meshStandardMaterial color={colors.x} />
         </mesh>
-        <Text
-          position={[halfLength + sphereRadius + 0.2, 0, 0]}
-          fontSize={sphereRadius * 2}
-          color="white"
-          anchorX="center"
-          anchorY="middle"
-          billboard
-        >
-          E
-        </Text>
+        <Billboard position={[halfLength + sphereRadius + 0.3, 0, 0]}>
+          <Text
+            fontSize={sphereRadius * 2}
+            color="white"
+            anchorX="center"
+            anchorY="middle"
+          >
+            N
+          </Text>
+        </Billboard>
         
-        {/* West sphere */}
+        {/* South sphere */}
         <mesh position={[-halfLength, 0, 0]}>
           <sphereGeometry args={[sphereRadius, 16, 16]} />
           <meshStandardMaterial color={colors.x} />
         </mesh>
-        <Text
-          position={[-halfLength - sphereRadius - 0.2, 0, 0]}
-          fontSize={sphereRadius * 2}
-          color="white"
-          anchorX="center"
-          anchorY="middle"
-          billboard
-        >
-          W
-        </Text>
+        <Billboard position={[-halfLength - sphereRadius - 0.3, 0, 0]}>
+          <Text
+            fontSize={sphereRadius * 2}
+            color="white"
+            anchorX="center"
+            anchorY="middle"
+          >
+            S
+          </Text>
+        </Billboard>
       </group>
 
       {/* Y-axis (Up-Down) */}
@@ -85,35 +98,35 @@ export const Compass3D: React.FC<Compass3DProps> = ({
           <sphereGeometry args={[sphereRadius, 16, 16]} />
           <meshStandardMaterial color={colors.y} />
         </mesh>
-        <Text
-          position={[0, halfLength + sphereRadius + 0.2, 0]}
-          fontSize={sphereRadius * 2}
-          color="white"
-          anchorX="center"
-          anchorY="middle"
-          billboard
-        >
-          Up
-        </Text>
+        <Billboard position={[0, halfLength + sphereRadius + 0.3, 0]}>
+          <Text
+            fontSize={sphereRadius * 2}
+            color="white"
+            anchorX="center"
+            anchorY="middle"
+          >
+            Up
+          </Text>
+        </Billboard>
         
         {/* Down sphere */}
         <mesh position={[0, -halfLength, 0]}>
           <sphereGeometry args={[sphereRadius, 16, 16]} />
           <meshStandardMaterial color={colors.y} />
         </mesh>
-        <Text
-          position={[0, -halfLength - sphereRadius - 0.2, 0]}
-          fontSize={sphereRadius * 2}
-          color="white"
-          anchorX="center"
-          anchorY="middle"
-          billboard
-        >
-          Down
-        </Text>
+        <Billboard position={[0, -halfLength - sphereRadius - 0.3, 0]}>
+          <Text
+            fontSize={sphereRadius * 2}
+            color="white"
+            anchorX="center"
+            anchorY="middle"
+          >
+            Down
+          </Text>
+        </Billboard>
       </group>
 
-      {/* Z-axis (North-South) */}
+      {/* Z-axis (East-West) */}
       <group>
         {/* Cylinder */}
         <mesh rotation={[Math.PI / 2, 0, 0]}>
@@ -121,37 +134,37 @@ export const Compass3D: React.FC<Compass3DProps> = ({
           <meshStandardMaterial color={colors.z} />
         </mesh>
         
-        {/* North sphere */}
+        {/* West sphere */}
         <mesh position={[0, 0, -halfLength]}>
           <sphereGeometry args={[sphereRadius, 16, 16]} />
           <meshStandardMaterial color={colors.z} />
         </mesh>
-        <Text
-          position={[0, 0, -halfLength - sphereRadius - 0.2]}
-          fontSize={sphereRadius * 2}
-          color="white"
-          anchorX="center"
-          anchorY="middle"
-          billboard
-        >
-          N
-        </Text>
+        <Billboard position={[0, 0, -halfLength - sphereRadius - 0.3]}>
+          <Text
+            fontSize={sphereRadius * 2}
+            color="white"
+            anchorX="center"
+            anchorY="middle"
+          >
+            W
+          </Text>
+        </Billboard>
         
-        {/* South sphere */}
+        {/* East sphere */}
         <mesh position={[0, 0, halfLength]}>
           <sphereGeometry args={[sphereRadius, 16, 16]} />
           <meshStandardMaterial color={colors.z} />
         </mesh>
-        <Text
-          position={[0, 0, halfLength + sphereRadius + 0.2]}
-          fontSize={sphereRadius * 2}
-          color="white"
-          anchorX="center"
-          anchorY="middle"
-          billboard
-        >
-          S
-        </Text>
+        <Billboard position={[0, 0, halfLength + sphereRadius + 0.3]}>
+          <Text
+            fontSize={sphereRadius * 2}
+            color="white"
+            anchorX="center"
+            anchorY="middle"
+          >
+            E
+          </Text>
+        </Billboard>
       </group>
 
       {/* Optional: Add a center sphere for reference */}

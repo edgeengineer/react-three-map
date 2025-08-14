@@ -5,7 +5,6 @@ import { useEffect, useState } from "react";
 import { useMap } from "react-map-gl/maplibre";
 import { Compass3D } from "../../src/compass-3d";
 import { StoryMap } from "./story-map";
-import * as THREE from 'three';
 
 // Component to sync compass rotation with map camera
 function MapCompass() {
@@ -48,20 +47,11 @@ function MapCompass() {
     };
   }, [map]);
 
-  // Convert map bearing and pitch to compass rotation
-  // Map bearing: 0 = north is up, positive = clockwise rotation
-  // Map pitch: 0 = looking straight down, 60 = tilted view
-  const compassRotation: [number, number, number] = [
-    THREE.MathUtils.degToRad(pitch), // X rotation (pitch)
-    THREE.MathUtils.degToRad(-bearing), // Y rotation (bearing, negated for correct direction)
-    0 // Z rotation
-  ];
-
   return (
     <div style={{
       position: 'absolute',
-      top: '20px',
-      right: '20px',
+      bottom: '20px',
+      left: '20px',
       width: '200px',
       height: '200px',
       background: 'rgba(0, 0, 0, 0.7)',
@@ -88,7 +78,8 @@ function MapCompass() {
           cylinderLength={cylinderLength}
           cylinderRadius={cylinderRadius}
           sphereRadius={sphereRadius}
-          rotation={compassRotation}
+          bearing={bearing}
+          pitch={pitch}
           scale={compassScale}
         />
         
@@ -249,17 +240,15 @@ export function Compass3DStandalone() {
     cylinderLength, 
     cylinderRadius, 
     sphereRadius,
-    rotationX,
-    rotationY,
-    rotationZ,
+    bearing,
+    pitch,
     scale
   } = useControls({
     cylinderLength: { value: 2, min: 1, max: 5, step: 0.1 },
     cylinderRadius: { value: 0.05, min: 0.01, max: 0.2, step: 0.01 },
     sphereRadius: { value: 0.2, min: 0.1, max: 0.5, step: 0.05 },
-    rotationX: { value: 0, min: -180, max: 180, step: 1 },
-    rotationY: { value: 0, min: -180, max: 180, step: 1 },
-    rotationZ: { value: 0, min: -180, max: 180, step: 1 },
+    bearing: { value: 0, min: -180, max: 180, step: 1 },
+    pitch: { value: 0, min: -90, max: 90, step: 1 },
     scale: { value: 1, min: 0.1, max: 3, step: 0.1 }
   });
 
@@ -281,11 +270,8 @@ export function Compass3DStandalone() {
           cylinderLength={cylinderLength}
           cylinderRadius={cylinderRadius}
           sphereRadius={sphereRadius}
-          rotation={[
-            THREE.MathUtils.degToRad(rotationX),
-            THREE.MathUtils.degToRad(rotationY),
-            THREE.MathUtils.degToRad(rotationZ)
-          ]}
+          bearing={bearing}
+          pitch={pitch}
           scale={scale}
         />
         <gridHelper args={[10, 10]} />
