@@ -17,6 +17,12 @@ Until now you had:
 
 Now with `@edgeengineer/react-three-map`, you can use them together :fist_right::star::fist_left:.
 
+## About This Fork
+
+- Our goal is to build an advanced, Blender‑style mesh editor on top of react-three-map. This includes rich gizmos, buffer geometry editing, per‑vertex/face tools, and scene management designed for geospatial contexts.
+- Because of this direction, we expect this fork to diverge rapidly from the original API and scope. We’ll strive to keep the surface area stable where possible, but new editor features will take priority.
+- Tremendous credit to [RodrigoHamuy](https://github.com/RodrigoHamuy) for the original project and its elegant architecture. This work stands on top of his foundations; please consider supporting the upstream project.
+
 ## ✨ New Features in this Fork
 
 - **🎮 Custom Pivot Controls** - Enhanced interaction controls for 3D objects in map space
