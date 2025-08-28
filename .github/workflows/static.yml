@@ -25,9 +25,9 @@ jobs:
         with:
           node-version-file: '.nvmrc'
       - run: yarn install --frozen-lockfile
-      - run: yarn build:stories
+      - run: yarn build:storybook
       - uses: actions/configure-pages@v4
       - uses: actions/upload-pages-artifact@v3
         with:
-          path: build
+          path: storybook-static
       - uses: actions/deploy-pages@v4

@@ -1,5 +1,5 @@
-import React, { useState, useCallback, useEffect, useRef } from 'react'
-import type { Story } from '@ladle/react'
+import React, { useState, useCallback, useEffect, useRef, useMemo } from 'react'
+import type { Meta, StoryObj } from '@storybook/react'
 import { StoryMap } from './story-map'
 import { Coordinates } from 'react-three-map'
 import { Box, Sphere, Cone, Plane } from '@react-three/drei'
@@ -65,9 +65,10 @@ function GeometryOnMap({ object }: { object: GeometryObject }) {
   )
 }
 
-export const BufferGeometryEditor: Story = () => {
+const BufferGeometryEditorComponent = () => {
   const [objects, setObjects] = useState<GeometryObject[]>([])
-  const center: [number, number] = [-122.4194, 37.7749]
+  // Memoize center to keep a stable reference for hook deps
+  const center = useMemo<[number, number]>(() => [-122.4194, 37.7749], [])
 
   // Store settings for each geometry type
   const [planeSettings, setPlaneSettings] = useState({ subdivisions: 1, scale: 1, color: '#9333ea' })
@@ -325,8 +326,15 @@ export const BufferGeometryEditor: Story = () => {
   )
 }
 
-BufferGeometryEditor.storyName = 'Buffer Geometry Editor'
+const meta: Meta<typeof BufferGeometryEditorComponent> = {
+  title: 'Examples/Buffer Geometry Editor',
+  component: BufferGeometryEditorComponent,
+}
 
-export default {
-  title: 'Buffer Geometry Editor',
+export default meta
+type Story = StoryObj<typeof meta>
+
+export const Default: Story = {
+  render: () => <BufferGeometryEditorComponent />,
+  name: 'Buffer Geometry Editor'
 }

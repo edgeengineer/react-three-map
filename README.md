@@ -52,7 +52,7 @@ npm install @edgeengineer/react-three-map
 
 ## :book: Examples
 
-Check out our examples [here](https://rodrigohamuy.github.io/react-three-map) (powered by [Ladle](https://ladle.dev/)).
+Check out our examples [here](https://edgeengineer.github.io/react-three-map) (powered by [Storybook](https://storybook.js.org/)).
 
 ## :mag: What does it look like?
 
@@ -264,3 +264,22 @@ Recommended to use at city level distances, but margin errors will be noticeable
 | `origin: Coords`         | The geographic coordinates used as the origin for calculations. |
 
 Returns a `Coords` object representing the geographic coordinates of the point relative to the origin.
+
+## :rocket: Development
+
+To run the examples locally:
+
+```sh
+# Install dependencies
+yarn install
+
+# Run Storybook for interactive development
+yarn dev
+# or
+yarn storybook
+
+# Build Storybook for production
+yarn build:storybook
+```
+
+The Storybook will be available at `http://localhost:6006`.
