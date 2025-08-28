@@ -223,12 +223,19 @@ const AxisRotator: React.FC<{
         ref={raycastMeshRef}
         geometry={tubeGeometry}
         onPointerDown={handlePointerDown}
-        onPointerOver={() => enabled && (!anyDragging || dragging) && setHovered(true)}
+        onPointerOver={(e) => {
+          if (!enabled) return
+          if (!anyDragging || dragging) {
+            // Ensure only the nearest intersected gizmo handles hover
+            e.stopPropagation()
+            setHovered(true)
+          }
+        }}
         onPointerOut={() => setHovered(false)}
       >
         <meshBasicMaterial 
-          color={enabled ? (hovered || dragging ? '#ffff00' : color) : '#808080'}
-          opacity={enabled ? (hovered || dragging ? 1 : 0.6) : 0.3}
+          color={enabled ? (((hovered && !anyDragging) || dragging) ? '#ffff00' : color) : '#808080'}
+          opacity={enabled ? (((hovered && !anyDragging) || dragging) ? 1 : 0.6) : 0.3}
           transparent
         />
       </mesh>
@@ -372,7 +379,14 @@ const AxisArrow: React.FC<{
         visible={false}
         position={[0, (arrowLength + coneLength) / 2, 0]}
         onPointerDown={handlePointerDown}
-        onPointerOver={() => enabled && (!anyDragging || dragging) && setHovered(true)}
+        onPointerOver={(e) => {
+          if (!enabled) return
+          if (!anyDragging || dragging) {
+            // Ensure only the nearest intersected gizmo handles hover
+            e.stopPropagation()
+            setHovered(true)
+          }
+        }}
         onPointerOut={() => setHovered(false)}
       >
         <cylinderGeometry args={[coneWidth * 1.4, coneWidth * 1.4, arrowLength + coneLength, 8, 1]} />
@@ -382,7 +396,7 @@ const AxisArrow: React.FC<{
       <mesh position={[0, arrowLength / 2, 0]}>
         <cylinderGeometry args={[cylinderWidth, cylinderWidth, arrowLength, 4, 1]} />
         <meshBasicMaterial 
-          color={enabled ? (hovered || dragging ? '#ffff00' : color) : '#808080'} 
+          color={enabled ? (((hovered && !anyDragging) || dragging) ? '#ffff00' : color) : '#808080'} 
           opacity={enabled ? 1 : 0.3}
           transparent
         />
@@ -392,7 +406,7 @@ const AxisArrow: React.FC<{
       <mesh position={[0, arrowLength + coneLength / 2, 0]}>
         <coneGeometry args={[coneWidth, coneLength, 8, 1]} />
         <meshBasicMaterial 
-          color={enabled ? (hovered || dragging ? '#ffff00' : color) : '#808080'}
+          color={enabled ? (((hovered && !anyDragging) || dragging) ? '#ffff00' : color) : '#808080'}
           opacity={enabled ? 1 : 0.3}
           transparent
         />
@@ -420,6 +434,7 @@ export const EnhancedPivotControls: React.FC<PivotControlsProps> = ({
   enabled = true
 }) => {
   const groupRef = useRef<Group>(null)
+  const [anyDragging, setAnyDragging] = useState(false)
   
   const config = useMemo<ContextProps>(() => ({
     scale,
@@ -433,8 +448,10 @@ export const EnhancedPivotControls: React.FC<PivotControlsProps> = ({
     arrowHeadSize,
     arrowLength,
     arrowHeadLength,
-    enabled
-  }), [scale, annotations, onDragStart, onDragEnd, onDrag, matrix, rotationThickness, translationThickness, arrowHeadSize, arrowLength, arrowHeadLength, enabled])
+    enabled,
+    anyDragging,
+    setAnyDragging,
+  }), [scale, annotations, onDragStart, onDragEnd, onDrag, matrix, rotationThickness, translationThickness, arrowHeadSize, arrowLength, arrowHeadLength, enabled, anyDragging])
   
   const translationEnabled = useMemo(() => {
     if (typeof disableTranslations === 'boolean') {
