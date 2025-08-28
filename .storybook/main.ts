@@ -23,6 +23,10 @@ const config: StorybookConfig = {
     
     return {
       ...config,
+      define: {
+        ...config.define,
+        'import.meta.env.VITE_MAPBOX_TOKEN': JSON.stringify(process.env.VITE_MAPBOX_TOKEN || 'pk.eyJ1IjoibWJhbGV4OTkiLCJhIjoiY2o1cGttZTJjMGJ5NDMycHFwY2h0amZieSJ9.fHqdZDfrCz6dEYTdnQ-hjQ'),
+      },
       resolve: {
         ...config.resolve,
         alias: {
