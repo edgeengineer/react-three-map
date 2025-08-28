@@ -51,6 +51,8 @@ interface ContextProps {
   arrowLength: number
   arrowHeadLength: number
   enabled: boolean
+  anyDragging: boolean
+  setAnyDragging: (v: boolean) => void
 }
 
 const Context = createContext<ContextProps>({
@@ -62,7 +64,9 @@ const Context = createContext<ContextProps>({
   arrowHeadSize: 0.05,
   arrowLength: 1,
   arrowHeadLength: 0.2,
-  enabled: true
+  enabled: true,
+  anyDragging: false,
+  setAnyDragging: () => {}
 })
 
 const _quaternion = new Quaternion()
@@ -75,7 +79,7 @@ const AxisRotator: React.FC<{
   direction: Vector3
   color: string
 }> = ({ axis, direction, color }) => {
-  const { scale, annotations, onDragStart, onDragEnd, onDrag, matrix, rotationThickness, enabled } = useContext(Context)
+  const { scale, annotations, onDragStart, onDragEnd, onDrag, matrix, rotationThickness, enabled, anyDragging, setAnyDragging } = useContext(Context)
   const [hovered, setHovered] = useState(false)
   const [dragging, setDragging] = useState(false)
   const [angle, setAngle] = useState(0)
@@ -121,6 +125,7 @@ const AxisRotator: React.FC<{
       // Don't use preventDefault as it causes issues with passive event listeners
     }
     setDragging(true)
+    setAnyDragging(true)
     
     // Store initial rotation
     matrix.decompose(_position, _quaternion, _scale)
@@ -138,9 +143,10 @@ const AxisRotator: React.FC<{
       setDragging(false)
       setAngle(0)
       dragStartRef.current = undefined
+      setAnyDragging(false)
       onDragEnd?.()
     }
-  }, [dragging, onDragEnd])
+  }, [dragging, onDragEnd, setAnyDragging])
   
   const handlePointerMove = useCallback((e: PointerEvent) => {
     if (dragging && onDrag && dragStartRef.current) {
@@ -217,12 +223,19 @@ const AxisRotator: React.FC<{
         ref={raycastMeshRef}
         geometry={tubeGeometry}
         onPointerDown={handlePointerDown}
-        onPointerOver={() => enabled && setHovered(true)}
+        onPointerOver={(e) => {
+          if (!enabled) return
+          if (!anyDragging || dragging) {
+            // Ensure only the nearest intersected gizmo handles hover
+            e.stopPropagation()
+            setHovered(true)
+          }
+        }}
         onPointerOut={() => setHovered(false)}
       >
         <meshBasicMaterial 
-          color={enabled ? (hovered || dragging ? '#ffff00' : color) : '#808080'}
-          opacity={enabled ? (hovered || dragging ? 1 : 0.6) : 0.3}
+          color={enabled ? (((hovered && !anyDragging) || dragging) ? '#ffff00' : color) : '#808080'}
+          opacity={enabled ? (((hovered && !anyDragging) || dragging) ? 1 : 0.6) : 0.3}
           transparent
         />
       </mesh>
@@ -254,7 +267,7 @@ const AxisArrow: React.FC<{
   direction: Vector3
   color: string
 }> = ({ axis, direction, color }) => {
-  const { scale, onDragStart, onDragEnd, onDrag, matrix, translationThickness, arrowHeadSize, arrowLength: arrowLengthProp, arrowHeadLength, enabled } = useContext(Context)
+  const { scale, onDragStart, onDragEnd, onDrag, matrix, translationThickness, arrowHeadSize, arrowLength: arrowLengthProp, arrowHeadLength, enabled, anyDragging, setAnyDragging } = useContext(Context)
   const [hovered, setHovered] = useState(false)
   const [dragging, setDragging] = useState(false)
   const { camera, gl } = useThree()
@@ -274,6 +287,7 @@ const AxisArrow: React.FC<{
       // Don't use preventDefault as it causes issues with passive event listeners
     }
     setDragging(true)
+    setAnyDragging(true)
     
     // Store initial position
     matrix.decompose(_position, _quaternion, _scale)
@@ -296,9 +310,10 @@ const AxisArrow: React.FC<{
     if (dragging) {
       setDragging(false)
       dragStartRef.current = undefined
+      setAnyDragging(false)
       onDragEnd?.()
     }
-  }, [dragging, onDragEnd])
+  }, [dragging, onDragEnd, setAnyDragging])
   
   const handlePointerMove = useCallback((e: PointerEvent) => {
     if (dragging && onDrag && dragStartRef.current) {
@@ -364,7 +379,14 @@ const AxisArrow: React.FC<{
         visible={false}
         position={[0, (arrowLength + coneLength) / 2, 0]}
         onPointerDown={handlePointerDown}
-        onPointerOver={() => enabled && setHovered(true)}
+        onPointerOver={(e) => {
+          if (!enabled) return
+          if (!anyDragging || dragging) {
+            // Ensure only the nearest intersected gizmo handles hover
+            e.stopPropagation()
+            setHovered(true)
+          }
+        }}
         onPointerOut={() => setHovered(false)}
       >
         <cylinderGeometry args={[coneWidth * 1.4, coneWidth * 1.4, arrowLength + coneLength, 8, 1]} />
@@ -374,7 +396,7 @@ const AxisArrow: React.FC<{
       <mesh position={[0, arrowLength / 2, 0]}>
         <cylinderGeometry args={[cylinderWidth, cylinderWidth, arrowLength, 4, 1]} />
         <meshBasicMaterial 
-          color={enabled ? (hovered || dragging ? '#ffff00' : color) : '#808080'} 
+          color={enabled ? (((hovered && !anyDragging) || dragging) ? '#ffff00' : color) : '#808080'} 
           opacity={enabled ? 1 : 0.3}
           transparent
         />
@@ -384,7 +406,7 @@ const AxisArrow: React.FC<{
       <mesh position={[0, arrowLength + coneLength / 2, 0]}>
         <coneGeometry args={[coneWidth, coneLength, 8, 1]} />
         <meshBasicMaterial 
-          color={enabled ? (hovered || dragging ? '#ffff00' : color) : '#808080'}
+          color={enabled ? (((hovered && !anyDragging) || dragging) ? '#ffff00' : color) : '#808080'}
           opacity={enabled ? 1 : 0.3}
           transparent
         />
@@ -412,6 +434,7 @@ export const EnhancedPivotControls: React.FC<PivotControlsProps> = ({
   enabled = true
 }) => {
   const groupRef = useRef<Group>(null)
+  const [anyDragging, setAnyDragging] = useState(false)
   
   const config = useMemo<ContextProps>(() => ({
     scale,
@@ -425,8 +448,10 @@ export const EnhancedPivotControls: React.FC<PivotControlsProps> = ({
     arrowHeadSize,
     arrowLength,
     arrowHeadLength,
-    enabled
-  }), [scale, annotations, onDragStart, onDragEnd, onDrag, matrix, rotationThickness, translationThickness, arrowHeadSize, arrowLength, arrowHeadLength, enabled])
+    enabled,
+    anyDragging,
+    setAnyDragging,
+  }), [scale, annotations, onDragStart, onDragEnd, onDrag, matrix, rotationThickness, translationThickness, arrowHeadSize, arrowLength, arrowHeadLength, enabled, anyDragging])
   
   const translationEnabled = useMemo(() => {
     if (typeof disableTranslations === 'boolean') {
