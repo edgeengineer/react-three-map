@@ -33,7 +33,7 @@ export function Default() {
 }
 
 const meta: Meta = {
-  title: 'Render On Demand',
+  title: 'MapLibre Examples/Render On Demand',
   component: Default,
 };
 

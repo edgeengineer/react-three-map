@@ -36,7 +36,7 @@ const useShowCamHelper = () => {
 }
 
 const meta: Meta = {
-  title: 'Comparison',
+  title: 'MapLibre Examples/Comparison',
   component: WithMap,
 };
 

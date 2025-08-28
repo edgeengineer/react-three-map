@@ -25,7 +25,7 @@ export function Default() {
 }
 
 const meta: Meta = {
-  title: 'Html On Top',
+  title: 'MapLibre Examples/Html On Top',
   component: Default,
 };
 

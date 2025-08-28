@@ -7,7 +7,7 @@ import Map from 'react-map-gl/mapbox';
 import { Canvas } from "react-three-map";
 import { Mesh } from "three";
 
-export default { title: 'Canvas' }
+export default { title: 'Mapbox Examples/Canvas' }
 
 const Box: FC<{ position: Vector3 }> = (props) => {
   // This reference gives us direct access to the THREE.Mesh object
