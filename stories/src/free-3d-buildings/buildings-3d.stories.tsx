@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { Bloom, EffectComposer } from '@react-three/postprocessing';
+// import { Bloom, EffectComposer } from '@react-three/postprocessing'; // Temporarily disabled
 import { levaStore, useControls } from "leva";
 import { Suspense, useEffect } from "react";
 import { Coords } from "react-three-map";
-import { ScreenBlend } from "../screen-blend-effect/screen-blend";
+// import { ScreenBlend } from "../screen-blend-effect/screen-blend"; // Part of post-processing, temporarily disabled
 import { StoryMap } from "../story-map";
 import { BatchedBuildings } from "./batched-buildings";
 import { AdaptiveDpr } from '../adaptive-dpr';
@@ -11,30 +11,12 @@ import { AdaptiveDpr } from '../adaptive-dpr';
 const coords: Coords = { latitude: 51.5074, longitude: -0.1278 };
 
 // Separate component to ensure hooks are used inside Canvas
+// Note: Temporarily disabling post-processing due to compatibility issues
 function SceneContent() {
-  const { bloom } = useControls({ bloom: { value: true } });
-  const { luminanceThreshold, levels, intensity, luminanceSmoothing } = useControls('bloom', {
-    levels: { value: 3, min: 0, max: 10, step: 0.01 },
-    intensity: { value: 1.62, min: 0, max: 2, step: 0.01 },
-    luminanceThreshold: { value: .1, min: 0, max: 2, step: 0.01, label: 'threshold' },
-    luminanceSmoothing: { value: 2, min: 0, max: 5, step: 0.01, label: 'smoothing' },
-  });
-  
   return (
     <>
       <AdaptiveDpr />
-      {bloom && (
-        <EffectComposer disableNormalPass>
-          <Bloom mipmapBlur
-            luminanceSmoothing={luminanceSmoothing}
-            luminanceThreshold={luminanceThreshold}
-            levels={levels}
-            intensity={intensity}
-          />
-          {/* ScreenBlend forces transparency to work on the canvas overlay */}
-          <ScreenBlend />
-        </EffectComposer>
-      )}
+      {/* Post-processing temporarily disabled - EffectComposer has compatibility issues with react-three-map Canvas */}
       <ambientLight intensity={Math.PI} />
       <directionalLight intensity={Math.PI} />
       <Suspense fallback={null}>
