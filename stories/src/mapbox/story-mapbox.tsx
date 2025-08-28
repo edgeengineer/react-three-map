@@ -1,4 +1,3 @@
-import { ThemeState, useLadleContext } from '@ladle/react';
 import { useControls } from 'leva';
 import Mapbox from "mapbox-gl";
 import 'mapbox-gl/dist/mapbox-gl.css';
@@ -19,11 +18,8 @@ export const StoryMapbox: FC<Omit<StoryMapProps, 'maplibreChildren' | 'maplibreS
     }
   })
 
-  const theme = useLadleContext().globalState.theme;
-
-  const defaultMapStyle = theme === ThemeState.Dark
-    ? "mapbox://styles/mapbox/dark-v11"
-    : "mapbox://styles/mapbox/streets-v12";
+  // Default to light theme - can be controlled via props if needed
+  const defaultMapStyle = "mapbox://styles/mapbox/streets-v12";
   
   const mapStyle = mapboxStyle || defaultMapStyle;
 

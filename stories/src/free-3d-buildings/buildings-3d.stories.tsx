@@ -1,5 +1,4 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { ActionType, ThemeState, useLadleContext } from '@ladle/react';
 import { Bloom, EffectComposer } from '@react-three/postprocessing';
 import { levaStore, useControls } from "leva";
 import { Suspense, useEffect } from "react";
@@ -12,7 +11,6 @@ import { AdaptiveDpr } from '../adaptive-dpr';
 const coords: Coords = { latitude: 51.5074, longitude: -0.1278 };
 
 export function Default() {
-  const { dispatch, globalState } = useLadleContext();
   const { bloom } = useControls({ bloom: { value: true } });
 
   // disable showBuildings3D control from Mapbox
@@ -24,15 +22,7 @@ export function Default() {
     luminanceSmoothing: { value: 2, min: 0, max: 5, step: 0.01, label: 'smoothing' },
   })
 
-  // use dark theme
-  useEffect(() => {
-    const prevTheme = globalState.theme
-    dispatch({ type: ActionType.UpdateTheme, value: ThemeState.Dark })
-    return () => {
-      // reset theme
-      dispatch({ type: ActionType.UpdateTheme, value: prevTheme })
-    }
-  }, []) // eslint-disable-line react-hooks/exhaustive-deps
+  // Dark theme is now handled via mapStyle prop
 
   // default this story to use overlay
   useEffect(() => {

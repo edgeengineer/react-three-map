@@ -1,4 +1,3 @@
-import { ThemeState, useLadleContext } from '@ladle/react';
 import MapLibre from "maplibre-gl";
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { FC, memo, useEffect, useRef } from "react";
@@ -68,11 +67,8 @@ export const StoryMaplibre: FC<Omit<StoryMapProps, 'mapboxChildren' | 'mapboxSty
   latitude, longitude, canvas, mapChildren, maplibreChildren, children, maplibreStyle, ...rest
 }) => {
 
-  const theme = useLadleContext().globalState.theme;
-
-  const defaultMapStyle = theme === ThemeState.Dark
-    ? "https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json"
-    : "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json";
+  // Default to light theme - can be controlled via props if needed
+  const defaultMapStyle = "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json";
   
   const mapStyle = maplibreStyle || defaultMapStyle;
   const showTerrainControl = maplibreStyle?.terrain ? true : false;
