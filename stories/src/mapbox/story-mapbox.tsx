@@ -11,9 +11,12 @@ export const StoryMapbox: FC<Omit<StoryMapProps, 'maplibreChildren' | 'maplibreS
   latitude, longitude, canvas, children, mapChildren, mapboxChildren, mapboxStyle, ...rest
 }) => {
 
+  // Set Mapbox token from env or use the default one
+  const defaultToken = import.meta.env.VITE_MAPBOX_TOKEN || 'pk.eyJ1IjoibWJhbGV4OTkiLCJhIjoiY2o1cGttZTJjMGJ5NDMycHFwY2h0amZieSJ9.fHqdZDfrCz6dEYTdnQ-hjQ';
+  
   const { mapboxToken } = useControls({
     mapboxToken: {
-      value: import.meta.env.VITE_MAPBOX_TOKEN || '',
+      value: defaultToken,
       label: 'mapbox token',
     }
   })
@@ -23,7 +26,10 @@ export const StoryMapbox: FC<Omit<StoryMapProps, 'maplibreChildren' | 'maplibreS
   
   const mapStyle = mapboxStyle || defaultMapStyle;
 
-  Mapbox.accessToken = mapboxToken;
+  // Set the access token
+  if (mapboxToken) {
+    Mapbox.accessToken = mapboxToken;
+  }
 
   const { showBuildings3D } = useControls({
     showBuildings3D: {

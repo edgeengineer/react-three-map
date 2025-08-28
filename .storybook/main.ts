@@ -1,4 +1,5 @@
 import type { StorybookConfig } from '@storybook/react-vite';
+import { loadEnv } from 'vite';
 
 const config: StorybookConfig = {
   stories: [
@@ -21,11 +22,14 @@ const config: StorybookConfig = {
   viteFinal: async (config, { configType }) => {
     const { default: path } = await import('path');
     
+    // Load environment variables
+    const env = loadEnv(configType || 'development', process.cwd(), '');
+    
     return {
       ...config,
       define: {
         ...config.define,
-        'import.meta.env.VITE_MAPBOX_TOKEN': JSON.stringify(process.env.VITE_MAPBOX_TOKEN || 'pk.eyJ1IjoibWJhbGV4OTkiLCJhIjoiY2o1cGttZTJjMGJ5NDMycHFwY2h0amZieSJ9.fHqdZDfrCz6dEYTdnQ-hjQ'),
+        'import.meta.env.VITE_MAPBOX_TOKEN': JSON.stringify(env.VITE_MAPBOX_TOKEN || 'pk.eyJ1IjoibWJhbGV4OTkiLCJhIjoiY2o1cGttZTJjMGJ5NDMycHFwY2h0amZieSJ9.fHqdZDfrCz6dEYTdnQ-hjQ'),
       },
       resolve: {
         ...config.resolve,

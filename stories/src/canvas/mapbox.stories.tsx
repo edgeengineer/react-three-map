@@ -10,10 +10,12 @@ import { Mesh } from "three";
 export default { title: 'Canvas' }
 
 export function Mapbox() {
+  // Set default token from env or use the provided one
+  const defaultToken = import.meta.env.VITE_MAPBOX_TOKEN || 'pk.eyJ1IjoibWJhbGV4OTkiLCJhIjoiY2o1cGttZTJjMGJ5NDMycHFwY2h0amZieSJ9.fHqdZDfrCz6dEYTdnQ-hjQ';
 
   const { mapboxToken } = useControls({
     mapboxToken: {
-      value: import.meta.env.VITE_MAPBOX_TOKEN || '',
+      value: defaultToken,
       label: 'mapbox token',
     }
   })
