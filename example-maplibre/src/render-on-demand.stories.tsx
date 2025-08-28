@@ -1,3 +1,4 @@
+import type { Meta, StoryObj } from '@storybook/react';
 import { Box, Stats } from "@react-three/drei";
 import { useRef, useState } from "react";
 import { Canvas } from "react-three-map/maplibre";
@@ -30,3 +31,16 @@ export function Default() {
     </div>
   </div>
 }
+
+const meta: Meta = {
+  title: 'Render On Demand',
+  component: Default,
+};
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const DefaultStory: Story = {
+  render: () => <Default />,
+  name: 'Default',
+};

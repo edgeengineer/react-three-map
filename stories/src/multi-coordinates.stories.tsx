@@ -1,3 +1,4 @@
+import type { Meta, StoryObj } from '@storybook/react';
 import { Box } from "@react-three/drei";
 import { Vector3 } from "@react-three/fiber";
 import { levaStore, useControls } from "leva";
@@ -95,3 +96,16 @@ const MyBox = ({ position, color, scale }: {
   />
   </object3D>
 }
+
+const meta: Meta = {
+  title: 'Multi Coordinates',
+  component: Default,
+};
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const DefaultStory: Story = {
+  render: () => <Default />,
+  name: 'Default',
+};

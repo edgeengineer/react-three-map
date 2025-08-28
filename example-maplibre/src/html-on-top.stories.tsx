@@ -1,3 +1,4 @@
+import type { Meta, StoryObj } from '@storybook/react';
 import { Box, Html } from "@react-three/drei";
 import { useState } from "react";
 import { Canvas } from "react-three-map/maplibre";
@@ -22,3 +23,16 @@ export function Default() {
     </Canvas>
   </StoryMap>
 }
+
+const meta: Meta = {
+  title: 'Html On Top',
+  component: Default,
+};
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const DefaultStory: Story = {
+  render: () => <Default />,
+  name: 'Default',
+};

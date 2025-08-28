@@ -1,3 +1,4 @@
+import type { Meta, StoryObj } from '@storybook/react';
 import { MapControls } from "@react-three/drei";
 import { Canvas as FiberCanvas } from "@react-three/fiber";
 import { useControls } from "leva";
@@ -38,3 +39,16 @@ const useShowCamHelper = () => {
   });
   return showCamHelper
 }
+
+const meta: Meta = {
+  title: 'Comparison',
+  component: WithMap,
+};
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const WithMapStory: Story = {
+  render: () => <WithMap />,
+  name: 'WithMap',
+};

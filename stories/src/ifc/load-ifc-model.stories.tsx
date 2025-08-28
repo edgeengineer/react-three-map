@@ -1,3 +1,4 @@
+import type { Meta, StoryObj } from '@storybook/react';
 import { Plane } from "@react-three/drei";
 import { button, folder, useControls } from "leva";
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
@@ -231,3 +232,16 @@ async function getLocalFileUrl() {
     input.click();
   });
 }
+
+const meta: Meta = {
+  title: 'Ifc/Load Ifc Model',
+  component: Default,
+};
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const DefaultStory: Story = {
+  render: () => <Default />,
+  name: 'Default',
+};

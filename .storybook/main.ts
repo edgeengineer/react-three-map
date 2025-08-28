@@ -29,9 +29,7 @@ const config: StorybookConfig = {
           ...config.resolve?.alias,
           'react-three-map': path.resolve(__dirname, '../src'),
           'react-three-map/maplibre': path.resolve(__dirname, '../src/maplibre'),
-          'react-three-map/mapbox': path.resolve(__dirname, '../src/mapbox'),
-          'react-map-gl/maplibre': 'react-map-gl/dist/esm/maplibre',
-          'react-map-gl': 'react-map-gl/dist/esm/index'
+          'react-three-map/mapbox': path.resolve(__dirname, '../src/mapbox')
         }
       },
       optimizeDeps: {

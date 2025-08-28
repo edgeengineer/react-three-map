@@ -1,3 +1,4 @@
+import type { Meta, StoryObj } from '@storybook/react';
 import { ActionType, ThemeState, useLadleContext } from '@ladle/react';
 import { Bloom, EffectComposer } from '@react-three/postprocessing';
 import { levaStore, useControls } from "leva";
@@ -68,3 +69,16 @@ export function Default() {
     </Suspense>
   </StoryMap>
 }
+
+const meta: Meta = {
+  title: 'Free 3d Buildings/Buildings 3d',
+  component: Default,
+};
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const DefaultStory: Story = {
+  render: () => <Default />,
+  name: 'Default',
+};

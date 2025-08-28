@@ -1,3 +1,4 @@
+import type { Meta, StoryObj } from '@storybook/react';
 import { Box, Plane } from "@react-three/drei";
 import { EffectComposer, N8AO } from '@react-three/postprocessing';
 import { levaStore, useControls } from "leva";
@@ -48,3 +49,15 @@ export function Default() {
   </StoryMap>
 }
 
+const meta: Meta = {
+  title: 'Postprocessing',
+  component: Default,
+};
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const DefaultStory: Story = {
+  render: () => <Default />,
+  name: 'Default',
+};

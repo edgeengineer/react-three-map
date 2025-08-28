@@ -1,3 +1,4 @@
+import type { Meta, StoryObj } from '@storybook/react';
 import { Billboard, Line, Plane, Ring, Sphere, useHelper } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { useControls } from "leva";
@@ -277,3 +278,16 @@ function getSunPosition({ date, latitude, longitude, radius = RADIUS }: {
   const y = radius * Math.sin(sun.altitude);
   return [x, y, z];
 }
+
+const meta: Meta = {
+  title: 'Sunlight/Sunlight',
+  component: Default,
+};
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const DefaultStory: Story = {
+  render: () => <Default />,
+  name: 'Default',
+};
