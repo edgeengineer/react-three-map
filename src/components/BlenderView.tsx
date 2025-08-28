@@ -20,6 +20,7 @@ import {
 } from './ui/dropdown-menu'
 import { Button } from './ui/button'
 import { Plus, Box, Circle, Triangle, Cylinder, Edit3, Move, Monitor, Tablet, Smartphone } from 'lucide-react'
+import './BlenderView.css'
 
 interface PrimitiveObject {
   id: string
@@ -83,45 +84,45 @@ export function BlenderView({ children, onAddPrimitive, objectCount }: BlenderVi
   const getDeviceIcon = () => {
     switch (device) {
       case 'tablet':
-        return <Tablet className="h-4 w-4" />
+        return <Tablet className="blender-view-icon" />
       case 'mobile':
-        return <Smartphone className="h-4 w-4" />
+        return <Smartphone className="blender-view-icon" />
       default:
-        return <Monitor className="h-4 w-4" />
+        return <Monitor className="blender-view-icon" />
     }
   }
 
   const getModeIcon = () => {
-    return mode === 'edit' ? <Edit3 className="h-4 w-4" /> : <Move className="h-4 w-4" />
+    return mode === 'edit' ? <Edit3 className="blender-view-icon" /> : <Move className="blender-view-icon" />
   }
 
   return (
-    <div className="w-full h-screen flex flex-col bg-zinc-900">
-      <div className="bg-zinc-800 border-b border-zinc-700">
-        <Menubar className="border-0 bg-transparent">
+    <div className="blender-view-container">
+      <div className="blender-view-header">
+        <Menubar className="blender-view-menubar">
           <MenubarMenu>
-            <MenubarTrigger className="text-zinc-300 hover:bg-zinc-700 data-[state=open]:bg-zinc-700">
+            <MenubarTrigger className="blender-view-menubar-trigger">
               File
             </MenubarTrigger>
-            <MenubarContent className="bg-zinc-800 border-zinc-700 text-zinc-300">
+            <MenubarContent className="blender-view-menubar-content">
               <MenubarItem>New Scene</MenubarItem>
               <MenubarItem>Open...</MenubarItem>
-              <MenubarSeparator className="bg-zinc-700" />
+              <MenubarSeparator className="blender-view-menubar-separator" />
               <MenubarItem>Save</MenubarItem>
               <MenubarItem>Save As...</MenubarItem>
-              <MenubarSeparator className="bg-zinc-700" />
+              <MenubarSeparator className="blender-view-menubar-separator" />
               <MenubarItem>Exit</MenubarItem>
             </MenubarContent>
           </MenubarMenu>
 
           <MenubarMenu>
-            <MenubarTrigger className="text-zinc-300 hover:bg-zinc-700 data-[state=open]:bg-zinc-700">
+            <MenubarTrigger className="blender-view-menubar-trigger">
               Edit
             </MenubarTrigger>
-            <MenubarContent className="bg-zinc-800 border-zinc-700 text-zinc-300">
+            <MenubarContent className="blender-view-menubar-content">
               <MenubarItem>Undo</MenubarItem>
               <MenubarItem>Redo</MenubarItem>
-              <MenubarSeparator className="bg-zinc-700" />
+              <MenubarSeparator className="blender-view-menubar-separator" />
               <MenubarItem>Cut</MenubarItem>
               <MenubarItem>Copy</MenubarItem>
               <MenubarItem>Paste</MenubarItem>
@@ -133,41 +134,41 @@ export function BlenderView({ children, onAddPrimitive, objectCount }: BlenderVi
               <Button 
                 variant="ghost" 
                 size="sm"
-                className="text-zinc-300 hover:bg-zinc-700 gap-2 ml-1"
+                className="blender-view-button"
               >
-                <Plus className="h-4 w-4" />
+                <Plus className="blender-view-icon" />
                 Add Primitive
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="bg-zinc-800 border-zinc-700 text-zinc-300">
-              <DropdownMenuLabel className="text-zinc-400">Mesh Primitives</DropdownMenuLabel>
-              <DropdownMenuSeparator className="bg-zinc-700" />
+            <DropdownMenuContent className="blender-view-dropdown-content">
+              <DropdownMenuLabel className="blender-view-dropdown-label">Mesh Primitives</DropdownMenuLabel>
+              <DropdownMenuSeparator className="blender-view-dropdown-separator" />
               <DropdownMenuItem 
                 onClick={() => addPrimitive('cube')}
-                className="hover:bg-zinc-700 focus:bg-zinc-700"
+                className="blender-view-dropdown-item"
               >
-                <Box className="mr-2 h-4 w-4" />
+                <Box className="blender-view-icon blender-view-icon-mr" />
                 Cube
               </DropdownMenuItem>
               <DropdownMenuItem 
                 onClick={() => addPrimitive('sphere')}
-                className="hover:bg-zinc-700 focus:bg-zinc-700"
+                className="blender-view-dropdown-item"
               >
-                <Circle className="mr-2 h-4 w-4" />
+                <Circle className="blender-view-icon blender-view-icon-mr" />
                 Sphere
               </DropdownMenuItem>
               <DropdownMenuItem 
                 onClick={() => addPrimitive('cone')}
-                className="hover:bg-zinc-700 focus:bg-zinc-700"
+                className="blender-view-dropdown-item"
               >
-                <Triangle className="mr-2 h-4 w-4" />
+                <Triangle className="blender-view-icon blender-view-icon-mr" />
                 Cone
               </DropdownMenuItem>
               <DropdownMenuItem 
                 onClick={() => addPrimitive('cylinder')}
-                className="hover:bg-zinc-700 focus:bg-zinc-700"
+                className="blender-view-dropdown-item"
               >
-                <Cylinder className="mr-2 h-4 w-4" />
+                <Cylinder className="blender-view-icon blender-view-icon-mr" />
                 Cylinder
               </DropdownMenuItem>
             </DropdownMenuContent>
@@ -176,49 +177,49 @@ export function BlenderView({ children, onAddPrimitive, objectCount }: BlenderVi
           <Button
             variant="ghost"
             size="sm"
-            className="text-zinc-300 hover:bg-zinc-700 gap-2 ml-1"
+            className="blender-view-button"
             onClick={toggleMode}
           >
             {getModeIcon()}
             {mode === 'edit' ? 'Edit Mode' : 'Object Mode'}
           </Button>
 
-          <div className="flex-1" />
+          <div className="blender-view-flex-1" />
 
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
               <Button 
                 variant="ghost" 
                 size="sm"
-                className="text-zinc-300 hover:bg-zinc-700 gap-2"
+                className="blender-view-button"
               >
                 {getDeviceIcon()}
                 {device.charAt(0).toUpperCase() + device.slice(1)}
               </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent className="bg-zinc-800 border-zinc-700 text-zinc-300">
-              <DropdownMenuLabel className="text-zinc-400">Device Preview</DropdownMenuLabel>
-              <DropdownMenuSeparator className="bg-zinc-700" />
+            <DropdownMenuContent className="blender-view-dropdown-content">
+              <DropdownMenuLabel className="blender-view-dropdown-label">Device Preview</DropdownMenuLabel>
+              <DropdownMenuSeparator className="blender-view-dropdown-separator" />
               <DropdownMenuRadioGroup value={device} onValueChange={(value) => setDevice(value as Device)}>
                 <DropdownMenuRadioItem 
                   value="desktop"
-                  className="hover:bg-zinc-700 focus:bg-zinc-700"
+                  className="blender-view-dropdown-item"
                 >
-                  <Monitor className="mr-2 h-4 w-4" />
+                  <Monitor className="blender-view-icon blender-view-icon-mr" />
                   Desktop
                 </DropdownMenuRadioItem>
                 <DropdownMenuRadioItem 
                   value="tablet"
-                  className="hover:bg-zinc-700 focus:bg-zinc-700"
+                  className="blender-view-dropdown-item"
                 >
-                  <Tablet className="mr-2 h-4 w-4" />
+                  <Tablet className="blender-view-icon blender-view-icon-mr" />
                   Tablet
                 </DropdownMenuRadioItem>
                 <DropdownMenuRadioItem 
                   value="mobile"
-                  className="hover:bg-zinc-700 focus:bg-zinc-700"
+                  className="blender-view-dropdown-item"
                 >
-                  <Smartphone className="mr-2 h-4 w-4" />
+                  <Smartphone className="blender-view-icon blender-view-icon-mr" />
                   Mobile
                 </DropdownMenuRadioItem>
               </DropdownMenuRadioGroup>
@@ -227,15 +228,15 @@ export function BlenderView({ children, onAddPrimitive, objectCount }: BlenderVi
         </Menubar>
       </div>
 
-      <div className="flex-1 relative">
+      <div className="blender-view-content">
         {children}
       </div>
 
-      <div className="bg-zinc-800 border-t border-zinc-700 px-4 py-2 flex items-center justify-between">
-        <span className="text-zinc-400 text-sm">
+      <div className="blender-view-statusbar">
+        <span className="blender-view-status-text">
           Objects: {objectCount ?? localObjectCount} | Mode: {mode === 'edit' ? 'Edit' : 'Object'} | Device: {device.charAt(0).toUpperCase() + device.slice(1)}
         </span>
-        <span className="text-zinc-500 text-xs">
+        <span className="blender-view-status-hint">
           Press Tab to toggle mode
         </span>
       </div>

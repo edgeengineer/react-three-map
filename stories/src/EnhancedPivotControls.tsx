@@ -51,6 +51,8 @@ interface ContextProps {
   arrowLength: number
   arrowHeadLength: number
   enabled: boolean
+  anyDragging: boolean
+  setAnyDragging: (v: boolean) => void
 }
 
 const Context = createContext<ContextProps>({
@@ -62,7 +64,9 @@ const Context = createContext<ContextProps>({
   arrowHeadSize: 0.05,
   arrowLength: 1,
   arrowHeadLength: 0.2,
-  enabled: true
+  enabled: true,
+  anyDragging: false,
+  setAnyDragging: () => {}
 })
 
 const _quaternion = new Quaternion()
@@ -75,7 +79,7 @@ const AxisRotator: React.FC<{
   direction: Vector3
   color: string
 }> = ({ axis, direction, color }) => {
-  const { scale, annotations, onDragStart, onDragEnd, onDrag, matrix, rotationThickness, enabled } = useContext(Context)
+  const { scale, annotations, onDragStart, onDragEnd, onDrag, matrix, rotationThickness, enabled, anyDragging, setAnyDragging } = useContext(Context)
   const [hovered, setHovered] = useState(false)
   const [dragging, setDragging] = useState(false)
   const [angle, setAngle] = useState(0)
@@ -121,6 +125,7 @@ const AxisRotator: React.FC<{
       // Don't use preventDefault as it causes issues with passive event listeners
     }
     setDragging(true)
+    setAnyDragging(true)
     
     // Store initial rotation
     matrix.decompose(_position, _quaternion, _scale)
@@ -138,9 +143,10 @@ const AxisRotator: React.FC<{
       setDragging(false)
       setAngle(0)
       dragStartRef.current = undefined
+      setAnyDragging(false)
       onDragEnd?.()
     }
-  }, [dragging, onDragEnd])
+  }, [dragging, onDragEnd, setAnyDragging])
   
   const handlePointerMove = useCallback((e: PointerEvent) => {
     if (dragging && onDrag && dragStartRef.current) {
@@ -217,7 +223,7 @@ const AxisRotator: React.FC<{
         ref={raycastMeshRef}
         geometry={tubeGeometry}
         onPointerDown={handlePointerDown}
-        onPointerOver={() => enabled && setHovered(true)}
+        onPointerOver={() => enabled && (!anyDragging || dragging) && setHovered(true)}
         onPointerOut={() => setHovered(false)}
       >
         <meshBasicMaterial 
@@ -254,7 +260,7 @@ const AxisArrow: React.FC<{
   direction: Vector3
   color: string
 }> = ({ axis, direction, color }) => {
-  const { scale, onDragStart, onDragEnd, onDrag, matrix, translationThickness, arrowHeadSize, arrowLength: arrowLengthProp, arrowHeadLength, enabled } = useContext(Context)
+  const { scale, onDragStart, onDragEnd, onDrag, matrix, translationThickness, arrowHeadSize, arrowLength: arrowLengthProp, arrowHeadLength, enabled, anyDragging, setAnyDragging } = useContext(Context)
   const [hovered, setHovered] = useState(false)
   const [dragging, setDragging] = useState(false)
   const { camera, gl } = useThree()
@@ -274,6 +280,7 @@ const AxisArrow: React.FC<{
       // Don't use preventDefault as it causes issues with passive event listeners
     }
     setDragging(true)
+    setAnyDragging(true)
     
     // Store initial position
     matrix.decompose(_position, _quaternion, _scale)
@@ -296,9 +303,10 @@ const AxisArrow: React.FC<{
     if (dragging) {
       setDragging(false)
       dragStartRef.current = undefined
+      setAnyDragging(false)
       onDragEnd?.()
     }
-  }, [dragging, onDragEnd])
+  }, [dragging, onDragEnd, setAnyDragging])
   
   const handlePointerMove = useCallback((e: PointerEvent) => {
     if (dragging && onDrag && dragStartRef.current) {
@@ -364,7 +372,7 @@ const AxisArrow: React.FC<{
         visible={false}
         position={[0, (arrowLength + coneLength) / 2, 0]}
         onPointerDown={handlePointerDown}
-        onPointerOver={() => enabled && setHovered(true)}
+        onPointerOver={() => enabled && (!anyDragging || dragging) && setHovered(true)}
         onPointerOut={() => setHovered(false)}
       >
         <cylinderGeometry args={[coneWidth * 1.4, coneWidth * 1.4, arrowLength + coneLength, 8, 1]} />
