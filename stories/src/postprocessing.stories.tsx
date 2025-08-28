@@ -56,8 +56,3 @@ const meta: Meta = {
 
 export default meta;
 type Story = StoryObj<typeof meta>;
-
-export const DefaultStory: Story = {
-  render: () => <Default />,
-  name: 'Default',
-};

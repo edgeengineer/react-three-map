@@ -334,7 +334,3 @@ const meta: Meta<typeof BufferGeometryEditorComponent> = {
 export default meta
 type Story = StoryObj<typeof meta>
 
-export const Default: Story = {
-  render: () => <BufferGeometryEditorComponent />,
-  name: 'Buffer Geometry Editor'
-}
