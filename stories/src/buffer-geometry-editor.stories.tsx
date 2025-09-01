@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef, useMemo } from 'react'
-import type { Meta, StoryObj } from '@storybook/react'
+import type { Meta } from '@storybook/react'
 import { StoryMap } from './story-map-storybook'
 import { Coordinates } from 'react-three-map'
 import { Box, Sphere, Cone, Plane } from '@react-three/drei'

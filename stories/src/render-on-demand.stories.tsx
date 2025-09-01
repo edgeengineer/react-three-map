@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import { Box, Stats } from "@react-three/drei";
 import { useRef, useState } from "react";
 import { MathUtils } from "three";

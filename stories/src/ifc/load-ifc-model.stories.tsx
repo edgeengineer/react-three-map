@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import { Plane } from "@react-three/drei";
 import { button, folder, useControls } from "leva";
 import { Suspense, useCallback, useEffect, useRef, useState } from "react";
