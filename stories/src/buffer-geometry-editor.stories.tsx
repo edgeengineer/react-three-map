@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect, useRef, useMemo } from 'react'
+import { useState, useCallback, useEffect, useRef, useMemo } from 'react'
 import type { Meta, StoryObj } from '@storybook/react'
 import { StoryMap } from './story-map-storybook'
 import { Coordinates } from 'react-three-map'
@@ -332,5 +332,4 @@ const meta: Meta<typeof BufferGeometryEditorComponent> = {
 }
 
 export default meta
-type Story = StoryObj<typeof meta>
 

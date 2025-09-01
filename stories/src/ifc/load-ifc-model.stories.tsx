@@ -5,7 +5,7 @@ import { Suspense, useCallback, useEffect, useRef, useState } from "react";
 import * as THREE from 'three';
 import { MathUtils } from "three";
 import * as OBC from '@thatopen/components';
-import * as FRAGS from '@thatopen/fragments';
+// import * as FRAGS from '@thatopen/fragments';
 import { StoryMap } from "../story-map-storybook";
 import modelUrl from './model.ifc?url';
 
@@ -239,4 +239,3 @@ const meta: Meta = {
 };
 
 export default meta;
-type Story = StoryObj<typeof meta>;

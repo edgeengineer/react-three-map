@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import { Billboard, Cylinder, Text } from "@react-three/drei";
 import { StoryMap } from "./story-map-storybook";
 
@@ -27,4 +27,3 @@ const meta: Meta = {
 };
 
 export default meta;
-type Story = StoryObj<typeof meta>;

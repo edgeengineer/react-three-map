@@ -1,4 +1,4 @@
-import React, { useState, useRef, useCallback, useEffect } from 'react'
+import React, { useState, useCallback, useEffect } from 'react'
 import * as THREE from 'three'
 import {
   Menubar,
@@ -42,22 +42,22 @@ export function BlenderView({ children, onAddPrimitive, objectCount }: BlenderVi
   const [localObjectCount, setLocalObjectCount] = useState(0)
   const [mode, setMode] = useState<Mode>('object')
   const [device, setDevice] = useState<Device>('desktop')
-  const [selectedObject, setSelectedObject] = useState<string | null>(null)
+  // const [selectedObject, setSelectedObject] = useState<string | null>(null)
 
-  const createGeometry = (type: PrimitiveObject['type']): THREE.BufferGeometry => {
-    switch (type) {
-      case 'cube':
-        return new THREE.BoxGeometry(1, 1, 1)
-      case 'sphere':
-        return new THREE.SphereGeometry(0.5, 32, 16)
-      case 'cone':
-        return new THREE.ConeGeometry(0.5, 1, 32)
-      case 'cylinder':
-        return new THREE.CylinderGeometry(0.5, 0.5, 1, 32)
-      default:
-        return new THREE.BoxGeometry(1, 1, 1)
-    }
-  }
+  // const createGeometry = (type: PrimitiveObject['type']): THREE.BufferGeometry => {
+  //   switch (type) {
+  //     case 'cube':
+  //       return new THREE.BoxGeometry(1, 1, 1)
+  //     case 'sphere':
+  //       return new THREE.SphereGeometry(0.5, 32, 16)
+  //     case 'cone':
+  //       return new THREE.ConeGeometry(0.5, 1, 32)
+  //     case 'cylinder':
+  //       return new THREE.CylinderGeometry(0.5, 0.5, 1, 32)
+  //     default:
+  //       return new THREE.BoxGeometry(1, 1, 1)
+  //   }
+  // }
 
   const addPrimitive = useCallback((type: PrimitiveObject['type']) => {
     setLocalObjectCount(prev => prev + 1)
