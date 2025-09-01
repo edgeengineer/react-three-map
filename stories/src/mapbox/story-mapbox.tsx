@@ -4,7 +4,7 @@ import 'mapbox-gl/dist/mapbox-gl.css';
 import { FC, PropsWithChildren, memo } from "react";
 import Map, { Layer } from 'react-map-gl/mapbox';
 import { Canvas } from 'react-three-map/mapbox';
-import { StoryMapProps } from '../story-map';
+import { StoryMapProps } from '../story-map-storybook';
 
 /** `<Map>` styled for stories */
 export const StoryMapbox: FC<Omit<StoryMapProps, 'maplibreChildren' | 'maplibreStyle'>> = ({

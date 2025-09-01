@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Box, Html } from "@react-three/drei";
 import { useState } from "react";
-import { Canvas } from "react-three-map";
+import { Canvas } from "react-three-map/mapbox";
 import { MathUtils } from "three";
-import { StoryMap } from "./story-map";
+import { StoryMap } from "./story-map-storybook";
 
 export function Default() {
 

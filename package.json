@@ -15,6 +15,9 @@
   },
   "license": "MIT",
   "author": "EdgeEngineer",
+  "engines": {
+    "node": ">=20.0.0"
+  },
   "scripts": {
     "prebuild": "tsc --project tsconfig.mapbox.json && tsc --project tsconfig.maplibre.json",
     "build": "yarn build:maplibre && yarn build:mapbox",
@@ -22,15 +25,18 @@
     "postbuild:maplibre": "cross-env LIB_MODE=2 MAP_MODE=0 vite build",
     "build:mapbox": "cross-env LIB_MODE=1 MAP_MODE=1 vite build",
     "postbuild:mapbox": "cross-env LIB_MODE=2 MAP_MODE=1 vite build",
-    "release": "yarn build && yarn changeset publish",
+    "release": "npm run build && npm run changeset:publish",
+    "changeset:publish": "changeset publish",
     "lint": "eslint src example-maplibre/src example-mapbox/src stories --ext ts,tsx --fix",
     "preview": "vite preview",
     "ts": "tsc -w",
     "ts:check": "tsc",
-    "dev": "yarn storybook",
+    "dev": "npm run storybook",
     "storybook": "storybook dev -p 6006",
     "build:storybook": "storybook build",
-    "test": "yarn vitest"
+    "preview:storybook": "npx serve storybook-static",
+    "test": "npm run vitest",
+    "vitest": "vitest"
   },
   "devDependencies": {
     "@changesets/cli": "^2.26.1",
@@ -104,7 +110,6 @@
   "publishConfig": {
     "access": "public"
   },
-  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e",
   "dependencies": {
     "@radix-ui/react-dropdown-menu": "^2.1.16",
     "@radix-ui/react-menubar": "^1.1.16",

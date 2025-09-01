@@ -5,7 +5,7 @@ import { levaStore, useControls } from "leva";
 import { FC, useEffect, useState } from "react";
 import { Coordinates, CoordinatesProps, NearCoordinates } from "react-three-map";
 import { ColorRepresentation } from "three";
-import { StoryMap } from "./story-map";
+import { StoryMap } from "./story-map-storybook";
 
 enum CoordinatesType {
   NearCoordinates = 'NearCoordinates',

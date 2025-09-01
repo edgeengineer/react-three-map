@@ -2,7 +2,7 @@ import MapLibre from "maplibre-gl";
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { FC, memo, useEffect, useRef } from "react";
 import Map, { useMap, NavigationControl, TerrainControl } from 'react-map-gl/maplibre';
-import { StoryMapProps } from '../story-map';
+import { StoryMapProps } from '../story-map-storybook';
 import { Canvas } from 'react-three-map/maplibre';
 
 // Component to setup terrain after map loads

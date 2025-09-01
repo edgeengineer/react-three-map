@@ -6,7 +6,7 @@ import * as THREE from 'three';
 import { MathUtils } from "three";
 import * as OBC from '@thatopen/components';
 import * as FRAGS from '@thatopen/fragments';
-import { StoryMap } from "../story-map";
+import { StoryMap } from "../story-map-storybook";
 import modelUrl from './model.ifc?url';
 
 export function Default() {

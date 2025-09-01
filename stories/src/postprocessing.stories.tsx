@@ -5,7 +5,7 @@ import { levaStore, useControls } from "leva";
 import { useEffect, useState } from "react";
 import { MathUtils } from "three";
 import { ScreenBlend } from "./screen-blend-effect/screen-blend";
-import { StoryMap } from "./story-map";
+import { StoryMap } from "./story-map-storybook";
 import { AdaptiveDpr } from "./adaptive-dpr";
 
 export function Default() {

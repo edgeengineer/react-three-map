@@ -7,7 +7,7 @@ import { useMap } from "react-three-map";
 import { getPosition } from "suncalc";
 import { BufferAttribute, BufferGeometry, CameraHelper, Color, MathUtils, OrthographicCamera, PCFSoftShadowMap, Vector3Tuple } from "three";
 import { ScreenSizer } from "../screen-sizer";
-import { StoryMap } from "../story-map";
+import { StoryMap } from "../story-map-storybook";
 import tzLookup from "tz-lookup";
 import { DateTime } from "luxon";
 

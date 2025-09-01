@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { Billboard, Cylinder, Text } from "@react-three/drei";
-import { StoryMap } from "./story-map";
+import { StoryMap } from "./story-map-storybook";
 
 export function Default() {
 

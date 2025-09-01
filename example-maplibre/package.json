@@ -3,11 +3,10 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "dev": "yarn ladle serve",
+    "dev": "echo 'Examples are now in the main project Storybook'",
     "ts": "tsc -w"
   },
   "dependencies": {
-    "@ladle/react": "^4.0.2",
     "@react-three/drei": "^9.77.10",
     "@react-three/fiber": "^8.13.4",
     "leva": "^0.9.35",

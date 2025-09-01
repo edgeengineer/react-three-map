@@ -4,7 +4,7 @@ import { levaStore, useControls } from "leva";
 import { Suspense, useEffect } from "react";
 import { Coords } from "react-three-map";
 // import { ScreenBlend } from "../screen-blend-effect/screen-blend"; // Part of post-processing, temporarily disabled
-import { StoryMap } from "../story-map";
+import { StoryMap } from "../story-map-storybook";
 import { BatchedBuildings } from "./batched-buildings";
 import { AdaptiveDpr } from '../adaptive-dpr';
 

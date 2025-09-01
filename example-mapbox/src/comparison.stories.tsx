@@ -1,9 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import { MapControls } from "@react-three/drei";
 import { Canvas as FiberCanvas } from "@react-three/fiber";
-import { Canvas } from "react-three-map";
+import { Canvas } from "react-three-map/mapbox";
 import { MyScene } from "./my-scene";
-import { StoryMap } from "./story-map";
+import { StoryMap } from "./story-map-storybook";
 import { useControls } from "leva";
 
 export function WithMap() {

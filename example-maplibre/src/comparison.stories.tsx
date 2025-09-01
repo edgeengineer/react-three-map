@@ -4,7 +4,7 @@ import { Canvas as FiberCanvas } from "@react-three/fiber";
 import { useControls } from "leva";
 import { Canvas } from "react-three-map/maplibre";
 import { MyScene } from "./my-scene";
-import { StoryMap } from "./story-map";
+import { StoryMap } from "./story-map-storybook";
 
 export function WithMap() {
   const showCamHelper = useShowCamHelper()
