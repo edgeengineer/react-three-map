@@ -1,8 +1,9 @@
+import type { Meta, StoryObj } from '@storybook/react';
 import { MapControls } from "@react-three/drei";
 import { Canvas as FiberCanvas } from "@react-three/fiber";
-import { Canvas } from "react-three-map";
+import { Canvas } from "react-three-map/mapbox";
 import { MyScene } from "./my-scene";
-import { StoryMap } from "./story-map";
+import { StoryMap } from "./story-map-storybook";
 import { useControls } from "leva";
 
 export function WithMap() {
@@ -35,3 +36,21 @@ const useShowCamHelper = () => {
   });
   return showCamHelper
 }
+
+const meta: Meta = {
+  title: 'Mapbox Examples/Comparison',
+  component: WithMap,
+};
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const WithMapStory: Story = {
+  render: () => <WithMap />,
+  name: 'WithMap',
+};
+
+export const WithoutMapStory: Story = {
+  render: () => <WithoutMap />,
+  name: 'WithoutMap',
+};

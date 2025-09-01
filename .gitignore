@@ -30,3 +30,4 @@ build
 .vscode
 
 coverage
+storybook-static

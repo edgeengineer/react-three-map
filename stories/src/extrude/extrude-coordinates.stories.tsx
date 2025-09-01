@@ -1,8 +1,9 @@
+import type { Meta, StoryObj } from '@storybook/react';
 import { Environment, Extrude, Html } from "@react-three/drei";
 import { useMemo } from "react";
 import { Coords, coordsToVector3 } from "react-three-map";
 import { MathUtils, Shape, Vector2Tuple } from "three";
-import { StoryMap } from "../story-map";
+import { StoryMap } from "../story-map-storybook";
 import { Chaillot } from "./chaillot";
 
 const origin: Coords = {
@@ -65,3 +66,16 @@ function ExtrudePoints({ points, origin }: { points: Vector2Tuple[], origin: Coo
     <meshStandardMaterial color="#e0e4cc" metalness={1} roughness={.2} />
   </Extrude>
 }
+
+const meta: Meta = {
+  title: 'Extrude/Extrude Coordinates',
+  component: ExtrudeCoordinates,
+};
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const ExtrudeCoordinatesStory: Story = {
+  render: () => <ExtrudeCoordinates />,
+  name: 'ExtrudeCoordinates',
+};

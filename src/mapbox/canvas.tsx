@@ -19,7 +19,14 @@ const fromLngLat = MercatorCoordinate.fromLngLat
 /** `react-three-fiber` canvas inside `Mapbox` */
 export const Canvas = memo<CanvasProps>(({ overlay, ...props }) => {
 
-  const map = useMap().current!.getMap(); // eslint-disable-line @typescript-eslint/no-non-null-assertion
+  const mapRef = useMap();
+  
+  if (!mapRef.current) {
+    console.error('Canvas must be used within a Map component from react-map-gl');
+    return null;
+  }
+  
+  const map = mapRef.current.getMap();
 
   return <>
     {overlay && <CanvasOverlay map={map} {...props} />}

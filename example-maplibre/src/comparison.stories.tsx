@@ -1,9 +1,10 @@
+import type { Meta, StoryObj } from '@storybook/react';
 import { MapControls } from "@react-three/drei";
 import { Canvas as FiberCanvas } from "@react-three/fiber";
 import { useControls } from "leva";
 import { Canvas } from "react-three-map/maplibre";
 import { MyScene } from "./my-scene";
-import { StoryMap } from "./story-map";
+import { StoryMap } from "./story-map-storybook";
 
 export function WithMap() {
   const showCamHelper = useShowCamHelper()
@@ -33,3 +34,21 @@ const useShowCamHelper = () => {
   });
   return showCamHelper
 }
+
+const meta: Meta = {
+  title: 'MapLibre Examples/Comparison',
+  component: WithMap,
+};
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+export const WithMapStory: Story = {
+  render: () => <WithMap />,
+  name: 'WithMap',
+};
+
+export const WithoutMapStory: Story = {
+  render: () => <WithoutMap />,
+  name: 'WithoutMap',
+};

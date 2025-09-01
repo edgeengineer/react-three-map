@@ -2,7 +2,7 @@ import { Box } from "@react-three/drei";
 import { useControls } from "leva";
 import { FC, useState } from "react";
 import { Vector3Tuple } from "three";
-import { StoryMap } from "./story-map";
+import { StoryMap } from "./story-map-storybook";
 
 export default {
   title: "Raycasting Test"

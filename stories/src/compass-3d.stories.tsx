@@ -4,7 +4,7 @@ import { useControls } from "leva";
 import { useEffect, useState } from "react";
 import { useMap } from "react-map-gl/maplibre";
 import { Compass3D } from "../../src/compass-3d";
-import { StoryMap } from "./story-map";
+import { StoryMap } from "./story-map-storybook";
 
 // Component to sync compass rotation with map camera
 function MapCompass() {

@@ -5,7 +5,7 @@ import Map from 'react-map-gl/maplibre';
 import { Canvas } from "react-three-map/maplibre";
 import { Mesh } from "three";
 
-export default { title: 'Canvas' }
+export default { title: 'MapLibre Examples/Canvas' }
 
 export function BasicExample() {
   return <div style={{ height: '100vh' }}>

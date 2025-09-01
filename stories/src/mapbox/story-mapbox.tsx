@@ -1,33 +1,35 @@
-import { ThemeState, useLadleContext } from '@ladle/react';
 import { useControls } from 'leva';
 import Mapbox from "mapbox-gl";
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { FC, PropsWithChildren, memo } from "react";
 import Map, { Layer } from 'react-map-gl/mapbox';
-import { Canvas } from 'react-three-map';
-import { StoryMapProps } from '../story-map';
+import { Canvas } from 'react-three-map/mapbox';
+import { StoryMapProps } from '../story-map-storybook';
 
 /** `<Map>` styled for stories */
 export const StoryMapbox: FC<Omit<StoryMapProps, 'maplibreChildren' | 'maplibreStyle'>> = ({
   latitude, longitude, canvas, children, mapChildren, mapboxChildren, mapboxStyle, ...rest
 }) => {
 
+  // Set Mapbox token from env or use the default one
+  const defaultToken = import.meta.env.VITE_MAPBOX_TOKEN || 'pk.eyJ1IjoibWJhbGV4OTkiLCJhIjoiY2o1cGttZTJjMGJ5NDMycHFwY2h0amZieSJ9.fHqdZDfrCz6dEYTdnQ-hjQ';
+  
   const { mapboxToken } = useControls({
     mapboxToken: {
-      value: import.meta.env.VITE_MAPBOX_TOKEN || '',
+      value: defaultToken,
       label: 'mapbox token',
     }
   })
 
-  const theme = useLadleContext().globalState.theme;
-
-  const defaultMapStyle = theme === ThemeState.Dark
-    ? "mapbox://styles/mapbox/dark-v11"
-    : "mapbox://styles/mapbox/streets-v12";
+  // Default to light theme - can be controlled via props if needed
+  const defaultMapStyle = "mapbox://styles/mapbox/streets-v12";
   
   const mapStyle = mapboxStyle || defaultMapStyle;
 
-  Mapbox.accessToken = mapboxToken;
+  // Set the access token
+  if (mapboxToken) {
+    Mapbox.accessToken = mapboxToken;
+  }
 
   const { showBuildings3D } = useControls({
     showBuildings3D: {

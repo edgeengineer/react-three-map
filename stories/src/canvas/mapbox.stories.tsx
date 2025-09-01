@@ -4,25 +4,34 @@ import MapboxGl from "mapbox-gl";
 import 'mapbox-gl/dist/mapbox-gl.css';
 import { FC, PropsWithChildren, useRef, useState } from "react";
 import Map from 'react-map-gl/mapbox';
-import { Canvas } from "react-three-map";
+import { Canvas } from "react-three-map/mapbox";
 import { Mesh } from "three";
 
 export default { title: 'Canvas' }
 
 export function Mapbox() {
+  // Set default token from env or use the provided one
+  const defaultToken = import.meta.env.VITE_MAPBOX_TOKEN || 'pk.eyJ1IjoibWJhbGV4OTkiLCJhIjoiY2o1cGttZTJjMGJ5NDMycHFwY2h0amZieSJ9.fHqdZDfrCz6dEYTdnQ-hjQ';
+  
+  // Set the access token immediately
+  MapboxGl.accessToken = defaultToken;
 
   const { mapboxToken } = useControls({
     mapboxToken: {
-      value: import.meta.env.VITE_MAPBOX_TOKEN || '',
+      value: defaultToken,
       label: 'mapbox token',
     }
   })
 
-  MapboxGl.accessToken = mapboxToken;
+  // Update token if changed in controls
+  if (mapboxToken) {
+    MapboxGl.accessToken = mapboxToken;
+  }
 
   return <div style={{ height: '100vh' }}>
     {!mapboxToken && <Center>Add a mapbox token to load this component</Center>}
     {!!mapboxToken && <Map
+      mapboxAccessToken={mapboxToken}
       antialias
       initialViewState={{
         latitude: 51,

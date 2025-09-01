@@ -1,7 +1,8 @@
+import type { Meta, StoryObj } from '@storybook/react';
 import { Box, Html } from "@react-three/drei";
 import { useState } from "react";
 import { MathUtils } from "three";
-import { StoryMap } from "./story-map";
+import { StoryMap } from "./story-map-storybook";
 
 export function Default() {
 
@@ -19,3 +20,11 @@ export function Default() {
     />
   </StoryMap>
 }
+
+const meta: Meta = {
+  title: 'Html On Top',
+  component: Default,
+};
+
+export default meta;
+type Story = StoryObj<typeof meta>;

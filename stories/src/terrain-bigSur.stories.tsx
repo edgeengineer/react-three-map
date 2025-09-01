@@ -4,7 +4,7 @@ import { FC, useCallback, useEffect, useMemo, useState } from "react";
 import { useMap } from "react-three-map";
 import { Euler, Matrix4, Vector3, Vector3Tuple } from "three";
 import { EnhancedPivotControls } from "./EnhancedPivotControls";
-import { StoryMap } from "./story-map";
+import { StoryMap } from "./story-map-storybook";
 
 // Back to Big Sur coordinates - AWS terrain tiles have global coverage
 // 36°16'47"N 121°50'00"W to decimal degrees

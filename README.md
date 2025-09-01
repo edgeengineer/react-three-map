@@ -52,7 +52,7 @@ npm install @edgeengineer/react-three-map
 
 ## :book: Examples
 
-Check out our examples [here](https://rodrigohamuy.github.io/react-three-map) (powered by [Ladle](https://ladle.dev/)).
+Check out our examples [here](https://edgeengineer.github.io/react-three-map) (powered by [Storybook](https://storybook.js.org/)).
 
 ## :mag: What does it look like?
 
@@ -264,3 +264,43 @@ Recommended to use at city level distances, but margin errors will be noticeable
 | `origin: Coords`         | The geographic coordinates used as the origin for calculations. |
 
 Returns a `Coords` object representing the geographic coordinates of the point relative to the origin.
+
+## :rocket: Development
+
+To run the examples locally:
+
+```sh
+# Install dependencies
+npm install
+
+# Run Storybook for interactive development
+npm run dev
+# or
+npm run storybook
+
+# Build Storybook for production
+npm run build:storybook
+```
+
+The Storybook will be available at `http://localhost:6006`.
+
+## 🚀 GitHub Pages Deployment
+
+The project is configured to automatically deploy Storybook to GitHub Pages when changes are pushed to the `main` branch.
+
+### Live Demo
+Visit the live Storybook at: https://edgeengineer.github.io/react-three-map/
+
+### Setup GitHub Pages
+
+1. **Enable GitHub Pages in your repository:**
+   - Go to Settings → Pages
+   - Under "Source", select "GitHub Actions"
+
+2. **The workflow will automatically:**
+   - Build Storybook on every push to `main`
+   - Deploy to GitHub Pages
+   - Make it available at `https://[username].github.io/[repo-name]/`
+
+### Manual Deployment
+You can also trigger deployment manually from the Actions tab in GitHub.

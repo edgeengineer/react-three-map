@@ -3,10 +3,9 @@
   "version": "0.0.0",
   "license": "MIT",
   "scripts": {
-    "dev": "yarn ladle serve"
+    "dev": "echo 'Stories are now in the main project Storybook'"
   },
   "dependencies": {
-    "@ladle/react": "^4.0.2",
     "@react-three/drei": "^9.97.6",
     "@react-three/fiber": "^8.15.12",
     "@react-three/postprocessing": "^2.15.11",

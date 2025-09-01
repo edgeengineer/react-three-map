@@ -1,5 +1,6 @@
+import type { Meta, StoryObj } from '@storybook/react';
 import { Billboard, Cylinder, Text } from "@react-three/drei";
-import { StoryMap } from "./story-map";
+import { StoryMap } from "./story-map-storybook";
 
 export function Default() {
 
@@ -19,3 +20,11 @@ export function Default() {
     </Billboard>
   </StoryMap>
 }
+
+const meta: Meta = {
+  title: 'Billboard',
+  component: Default,
+};
+
+export default meta;
+type Story = StoryObj<typeof meta>;

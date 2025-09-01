@@ -1,3 +1,4 @@
+import type { Meta, StoryObj } from '@storybook/react';
 import { Billboard, Line, Plane, Ring, Sphere, useHelper } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { useControls } from "leva";
@@ -6,7 +7,7 @@ import { useMap } from "react-three-map";
 import { getPosition } from "suncalc";
 import { BufferAttribute, BufferGeometry, CameraHelper, Color, MathUtils, OrthographicCamera, PCFSoftShadowMap, Vector3Tuple } from "three";
 import { ScreenSizer } from "../screen-sizer";
-import { StoryMap } from "../story-map";
+import { StoryMap } from "../story-map-storybook";
 import tzLookup from "tz-lookup";
 import { DateTime } from "luxon";
 
@@ -277,3 +278,11 @@ function getSunPosition({ date, latitude, longitude, radius = RADIUS }: {
   const y = radius * Math.sin(sun.altitude);
   return [x, y, z];
 }
+
+const meta: Meta = {
+  title: 'Sunlight/Sunlight',
+  component: Default,
+};
+
+export default meta;
+type Story = StoryObj<typeof meta>;
