@@ -43,7 +43,7 @@ export class BatchedPropertiesTexture extends DataTexture {
     const dim = field.dim
     const data = image.data
     const offset = id * width * 4 + fieldId * 4
-    for (let i = 0; i < dim; i++) data[offset + i] = values[i] || 0
+    for (let i = 0; i < dim; i++) (data as any)[offset + i] = values[i] || 0
     this.needsUpdate = true
   }
 

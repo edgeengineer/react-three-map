@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import { Environment, Extrude, Html } from "@react-three/drei";
 import { useMemo } from "react";
 import { Coords, coordsToVector3 } from "react-three-map";
@@ -73,9 +73,8 @@ const meta: Meta = {
 };
 
 export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const ExtrudeCoordinatesStory: Story = {
+export const ExtrudeCoordinatesStory = {
   render: () => <ExtrudeCoordinates />,
   name: 'ExtrudeCoordinates',
 };

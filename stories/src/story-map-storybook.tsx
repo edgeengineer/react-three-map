@@ -28,6 +28,7 @@ export interface StoryMapProps extends PropsWithChildren {
   maplibreChildren?: ReactNode,
   maplibreStyle?: any,
   mapboxStyle?: any,
+  mapStyleUrl?: string, // Added for backward compatibility
 }
 
 /** `<Map>` styled for stories */
@@ -43,9 +44,13 @@ export const StoryMap: FC<StoryMapProps> = (props) => {
     mapChildren,
     mapboxChildren,
     maplibreChildren,
-    maplibreStyle = 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json',
-    mapboxStyle = 'mapbox://styles/mapbox/dark-v11'
+    maplibreStyle,
+    mapboxStyle = 'mapbox://styles/mapbox/dark-v11',
+    mapStyleUrl // For backward compatibility
   } = props;
+  
+  // Use mapStyleUrl as fallback for maplibreStyle if provided
+  const actualMaplibreStyle = maplibreStyle || mapStyleUrl || 'https://basemaps.cartocdn.com/gl/dark-matter-gl-style/style.json';
 
   const { mapProvider, overlay } = useControls({
     mapProvider: {
@@ -67,7 +72,6 @@ export const StoryMap: FC<StoryMapProps> = (props) => {
   return <div style={{ height: '100vh', position: 'relative' }}>
     {mapProvider === MapProvider.maplibre && (
       <MaplibreMap
-        antialias
         initialViewState={{
           latitude,
           longitude,
@@ -75,7 +79,7 @@ export const StoryMap: FC<StoryMapProps> = (props) => {
           pitch,
           bearing
         }}
-        mapStyle={maplibreStyle}
+        mapStyle={actualMaplibreStyle}
       >
         <MaplibreCanvas latitude={latitude} longitude={longitude} {...canvasProps}>
           {children}

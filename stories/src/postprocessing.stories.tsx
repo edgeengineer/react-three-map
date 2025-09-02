@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import { Box, Plane } from "@react-three/drei";
 import { EffectComposer, N8AO } from '@react-three/postprocessing';
 import { levaStore, useControls } from "leva";
@@ -55,4 +55,3 @@ const meta: Meta = {
 };
 
 export default meta;
-type Story = StoryObj<typeof meta>;

@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 // import { Bloom, EffectComposer } from '@react-three/postprocessing'; // Temporarily disabled
 import { levaStore, useControls } from "leva";
 import { Suspense, useEffect } from "react";
@@ -59,4 +59,3 @@ const meta: Meta = {
 };
 
 export default meta;
-type Story = StoryObj<typeof meta>;

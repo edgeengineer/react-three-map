@@ -1,4 +1,4 @@
-import type { Meta, StoryObj } from '@storybook/react';
+import type { Meta } from '@storybook/react';
 import { MapControls } from "@react-three/drei";
 import { Canvas as FiberCanvas } from "@react-three/fiber";
 import { useControls } from "leva";
@@ -46,9 +46,8 @@ const meta: Meta = {
 };
 
 export default meta;
-type Story = StoryObj<typeof meta>;
 
-export const WithMapStory: Story = {
+export const WithMapStory = {
   render: () => <WithMap />,
   name: 'WithMap',
 };
