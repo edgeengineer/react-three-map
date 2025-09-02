@@ -20,7 +20,7 @@
   },
   "scripts": {
     "prebuild": "tsc --project tsconfig.mapbox.json && tsc --project tsconfig.maplibre.json",
-    "build": "yarn build:maplibre && yarn build:mapbox",
+    "build": "npm run build:maplibre && npm run build:mapbox",
     "build:maplibre": "cross-env LIB_MODE=1 MAP_MODE=0 vite build",
     "postbuild:maplibre": "cross-env LIB_MODE=2 MAP_MODE=0 vite build",
     "build:mapbox": "cross-env LIB_MODE=1 MAP_MODE=1 vite build",
